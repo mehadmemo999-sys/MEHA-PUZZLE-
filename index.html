@@ -172,7 +172,7 @@
       border: 3px solid var(--ancient-gold);
       border-radius: 18px;
       padding: 20px;
-      max-width: 500px;
+      max-width: 540px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
@@ -180,7 +180,7 @@
 
     .grid-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 10px;
       margin-top: 12px;
     }
@@ -191,6 +191,37 @@
       border-radius: 12px;
       padding: 10px;
       text-align: center;
+    }
+
+    .artifact-card {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid var(--ancient-gold);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .artifact-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--bright-gold);
+    }
+
+    .artifact-card.locked {
+      opacity: 0.48;
+      border-style: dashed;
+      border-color: rgba(244, 228, 188, 0.45);
+    }
+
+    .artifact-detail-box {
+      margin-top: 12px;
+      background: rgba(7, 18, 43, 0.85);
+      border: 1px solid var(--bright-gold);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: start;
+      display: none;
     }
   </style>
 </head>
@@ -219,7 +250,7 @@
     <div class="temple-backdrop">
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
         <h3 data-i18n="profileTitle">🏛️ الملف الشخصي</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-museum')" data-i18n="museumBtn">🏺 المتحف</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openMuseumModal()" data-i18n="museumBtn">🏺 المتحف</button>
         <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-achievements')" data-i18n="achievementsBtn">🏅 الإنجازات</button>
         <div class="item-card">
           <small data-i18n="xpLabel">نقاط الخبرة XP</small>
@@ -293,10 +324,27 @@
     </div>
   </div>
 
+  <!-- المتحف الشخصي (القطع الأثرية والشخصيات التاريخية) -->
   <div id="modal-museum" class="modal">
     <div class="modal-card">
-      <h3 data-i18n="museumTitle">🏺 المتحف الشخصي</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+        <h3 data-i18n="museumTitle">🏺 المتحف الشخصي</h3>
+        <div class="badge-box" style="color:#ffd700;">
+          <span data-i18n="museumCollectedLabel">المقتنيات:</span> <span id="museum-count">0 / 6</span>
+        </div>
+      </div>
+      <p style="margin-top:8px; font-size:0.9rem;" data-i18n="museumHint">اضغط على أي قطعة مكتشفة لقراءة قصتها التاريخية.</p>
       <div id="museum-grid" class="grid-cards"></div>
+      <div id="museum-detail-box" class="artifact-detail-box">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+          <span id="detail-icon" style="font-size:2rem;"></span>
+          <div>
+            <h4 id="detail-name" style="color:#ffd700;"></h4>
+            <small id="detail-category" style="color:#1abc9c;"></small>
+          </div>
+        </div>
+        <p id="detail-desc" style="font-size:0.92rem; line-height:1.5;"></p>
+      </div>
       <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-museum')" data-i18n="closeBtn">إغلاق</button>
     </div>
   </div>
@@ -319,7 +367,7 @@
       <h3 data-i18n="settingsTitle">⚙️ الإعدادات</h3>
       <div style="margin:12px 0;">
         <label data-i18n="volumeLabel">🎵 مستوى الصوت والموسيقى:</label>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
         <button class="stone-btn" style="margin-top:8px;" onclick="SoundEngine.playLevelMusic('giza')" data-i18n="testMusicBtn">🎶 اختبار الموسيقى الفرعونية</button>
       </div>
       <div style="margin:12px 0;">
@@ -387,10 +435,80 @@
           }
         }
       ],
+      // مقتنيات المتحف الشخصي (قطع أثرية وشخصيات تاريخية)
       ARTIFACTS: [
-        { icon: "🎭", name: "قناع ذهبي ملكي" },
-        { icon: "🪲", name: "جعران المعبد" },
-        { icon: "☥", name: "رمز العنخ المقدس" }
+        {
+          id: "art_mask",
+          icon: "🎭",
+          category: { ar: "قطعة أثرية ملكية", en: "Royal Artifact", fr: "Artéfact Royal", zh: "王室文物" },
+          name: { ar: "قناع الفرعون الذهبي", en: "Golden Pharaoh Mask", fr: "Masque d'Or du Pharaon", zh: "法老黄金面具" },
+          desc: {
+            ar: "قطعة نادرة مرصعة بالذهب والأحجار الفيروزية واللازورد من كنوز المقابر الملكية.",
+            en: "A rare piece inlaid with gold, turquoise, and lapis lazuli from royal tombs.",
+            fr: "Pièce rare incrustée d'or, de turquoise et de lapis-lazuli issue des tombes royales.",
+            zh: "镶嵌黄金、绿松石与青金石的珍贵王室文物。"
+          }
+        },
+        {
+          id: "art_scarab",
+          icon: "🪲",
+          category: { ar: "رمز أثري مقدس", en: "Sacred Relic", fr: "Relique Sacrée", zh: "神圣圣物" },
+          name: { ar: "جعران المعبد المقدس", en: "Sacred Temple Scarab", fr: "Scarabée Sacré du Temple", zh: "神庙圣甲虫" },
+          desc: {
+            ar: "تميمة فرعونية قديمة ترمز للتجدد والحماية والبعث في الحضارة المصرية.",
+            en: "An ancient Egyptian amulet symbolizing renewal, protection, and rebirth.",
+            fr: "Amulette égyptienne antique symbolisant le renouveau, la protection et la renaissance.",
+            zh: "象征重生、庇护与永恒的古埃及护身符。"
+          }
+        },
+        {
+          id: "art_ankh",
+          icon: "☥",
+          category: { ar: "رمز حضاري", en: "Cultural Symbol", fr: "Symbole Culturel", zh: "文化符号" },
+          name: { ar: "مفتاح الحياة (العنخ)", en: "Key of Life (Ankh)", fr: "Clé de Vie (Ânkh)", zh: "生命之符（安卡）" },
+          desc: {
+            ar: "أشهر الرموز الهيروغليفية التي تعبر عن الخلود والحياة الأبدية في مصر القديمة.",
+            en: "One of the most iconic hieroglyphic symbols representing eternal life in ancient Egypt.",
+            fr: "L'un des symboles hiéroglyphiques les plus célèbres représentant la vie éternelle.",
+            zh: "古埃及象征永恒生命最具代表性的象形文字之一。"
+          }
+        },
+        {
+          id: "fig_hatshepsut",
+          icon: "👸",
+          category: { ar: "شخصية تاريخية", en: "Historical Figure", fr: "Personnage Historique", zh: "历史人物" },
+          name: { ar: "الملكة حتشبسوت", en: "Queen Hatshepsut", fr: "Reine Hatchepsout", zh: "哈特谢普苏特女王" },
+          desc: {
+            ar: "من أبرز حاكمات مصر القديمة، اشتهرت بازدهار التجارة والرحلات البحرية وبناء المعابد.",
+            en: "One of ancient Egypt's most renowned rulers, famed for trade expeditions and temple building.",
+            fr: "L'une des souveraines les plus célèbres d'Égypte, connue pour le commerce et les temples.",
+            zh: "古埃及最著名的统治者之一，以远洋贸易与神庙营建闻名。"
+          }
+        },
+        {
+          id: "fig_ramses",
+          icon: "🏛️",
+          category: { ar: "شخصية تاريخية", en: "Historical Figure", fr: "Personnage Historique", zh: "历史人物" },
+          name: { ar: "الملك رمسيس الثاني", en: "King Ramesses II", fr: "Roi Ramsès II", zh: "拉美西斯二世" },
+          desc: {
+            ar: "من أعظم ملوك الأسرة التاسعة عشرة، ترك إرثاً معمارياً وتاريخياً ضخماً في صعيد مصر.",
+            en: "A great ruler of the 19th Dynasty who left a monumental architectural legacy in Egypt.",
+            fr: "Grand souverain de la XIXe dynastie ayant laissé un héritage architectural monumental.",
+            zh: "第十九王朝伟大法老，留下了宏伟的建筑与历史遗产。"
+          }
+        },
+        {
+          id: "fig_nefertiti",
+          icon: "👑",
+          category: { ar: "شخصية تاريخية", en: "Historical Figure", fr: "Personnage Historique", zh: "历史人物" },
+          name: { ar: "الملكة نفرتيتي", en: "Queen Nefertiti", fr: "Reine Néfertiti", zh: "娜芙蒂蒂王后" },
+          desc: {
+            ar: "رمز الجمال والوقار الملكي في مصر القديمة، وتُعد تماثيلها من أروع روائع الفن المصري.",
+            en: "An enduring icon of royal grace in ancient Egypt, celebrated for exquisite sculptures.",
+            fr: "Icône de grâce royale en Égypte antique, célèbre pour ses sculptures remarquables.",
+            zh: "古埃及王室优雅的象征，以其精美的雕像艺术而闻名。"
+          }
+        }
       ],
       LANGS: {
         ar: {
@@ -418,6 +536,8 @@
           buyBtn: "شراء",
           closeBtn: "إغلاق",
           museumTitle: "🏺 المتحف الشخصي",
+          museumCollectedLabel: "المقتنيات:",
+          museumHint: "اضغط على أي قطعة مكتشفة لقراءة قصتها التاريخية.",
           achievementsTitle: "🏅 الإنجازات والألقاب",
           ach1: "🏺 مستكشف الآثار",
           ach2: "🧩 خبير البازل",
@@ -457,6 +577,8 @@
           buyBtn: "Buy",
           closeBtn: "Close",
           museumTitle: "🏺 Personal Museum",
+          museumCollectedLabel: "Collected:",
+          museumHint: "Tap any unlocked item to read its historical story.",
           achievementsTitle: "🏅 Achievements & Titles",
           ach1: "🏺 Relic Explorer",
           ach2: "🧩 Puzzle Master",
@@ -496,6 +618,8 @@
           buyBtn: "Acheter",
           closeBtn: "Fermer",
           museumTitle: "🏺 Musée Personnel",
+          museumCollectedLabel: "Collectés :",
+          museumHint: "Touchez un élément débloqué pour lire son histoire.",
           achievementsTitle: "🏅 Succès & Titres",
           ach1: "🏺 Explorateur de Reliques",
           ach2: "🧩 Maître du Puzzle",
@@ -535,6 +659,8 @@
           buyBtn: "购买",
           closeBtn: "关闭",
           museumTitle: "🏺 个人博物馆",
+          museumCollectedLabel: "已收集：",
+          museumHint: "点击已解锁的藏品查看历史故事。",
           achievementsTitle: "🏅 成就与头衔",
           ach1: "🏺 文物探险家",
           ach2: "🧩 拼图大师",
@@ -552,6 +678,8 @@
       }
     };
 
+    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V1";
+
     const state = {
       lang: "ar",
       coins: 150,
@@ -561,7 +689,7 @@
       lives: 10,
       lastLifeTime: Date.now(),
       claimedLevels: [],
-      artifacts: [],
+      unlockedArtifactIds: [],
       wheelDate: null,
       boxDate: null,
       dailyPuzzleDate: null,
@@ -569,14 +697,31 @@
       viewBuys: { date: "", count: 0 }
     };
 
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        Object.assign(state, parsed);
+        if (!Array.isArray(state.unlockedArtifactIds)) state.unlockedArtifactIds = [];
+      } catch (e) {}
+    }
+
     const todayStr = () => new Date().toISOString().split("T")[0];
 
-    // نظام الصوت والموسيقى الفرعونية المحسّن
+    // نظام الصوت والموسيقى الفرعونية الحماسية
     const SoundEngine = {
       ctx: null,
-      volume: 0.7,
+      volume: 0.8,
       muted: false,
       musicTimer: null,
+      beatCount: 0,
 
       init() {
         if (!this.ctx) {
@@ -592,10 +737,10 @@
         this.init();
         this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
         this.muted = this.volume === 0;
-        this._playTone(523.25, 0.1, "triangle", 0, 0.25);
+        this._playDrum(130, 0.12, 0.35);
       },
 
-      _playTone(freq, duration = 0.3, type = "triangle", delay = 0, gainPeak = 0.28) {
+      _playTone(freq, duration = 0.25, type = "sawtooth", delay = 0, gainPeak = 0.22, slideTo = null) {
         this.init();
         if (!this.ctx || this.muted || this.volume <= 0) return;
 
@@ -605,10 +750,13 @@
 
         osc.type = type;
         osc.frequency.setValueAtTime(freq, now);
+        if (slideTo) {
+          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        }
 
-        const finalGain = Math.min(0.8, gainPeak * this.volume);
+        const finalGain = Math.min(0.75, gainPeak * this.volume);
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(finalGain, now + 0.025);
+        gain.gain.linearRampToValueAtTime(finalGain, now + 0.015);
         gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
 
         osc.connect(gain);
@@ -618,50 +766,83 @@
         osc.stop(now + duration + 0.03);
       },
 
+      _playDrum(startFreq = 140, duration = 0.22, gainPeak = 0.45, delay = 0) {
+        this._playTone(startFreq, duration, "sine", delay, gainPeak, 42);
+      },
+
       playSnap() {
-        this._playTone(523.25, 0.14, "triangle", 0, 0.3);
-        this._playTone(783.99, 0.18, "sine", 0.06, 0.26);
+        this._playTone(587.33, 0.11, "triangle", 0, 0.32);
+        this._playTone(880.0, 0.16, "sine", 0.05, 0.28);
       },
 
       playClick() {
-        this._playTone(440, 0.09, "triangle", 0, 0.18);
+        this._playTone(523.25, 0.08, "triangle", 0, 0.2);
       },
 
       playWinFanfare() {
-        const notes = [392.0, 493.88, 587.33, 783.99];
-        notes.forEach((n, idx) => {
-          this._playTone(n, 0.32, "triangle", idx * 0.13, 0.32);
+        const fanfare = [440.0, 554.37, 659.25, 880.0, 1174.66];
+        fanfare.forEach((n, idx) => {
+          this._playTone(n, 0.22, "sawtooth", idx * 0.09, 0.25);
+          this._playTone(n / 2, 0.24, "triangle", idx * 0.09, 0.25);
         });
+        this._playDrum(150, 0.3, 0.5, 0);
+        this._playDrum(150, 0.35, 0.55, 0.36);
       },
 
       playGameOver() {
-        const notes = [349.23, 311.13, 261.63];
+        const notes = [392.0, 349.23, 293.66, 220.0];
         notes.forEach((n, idx) => {
-          this._playTone(n, 0.38, "sawtooth", idx * 0.18, 0.22);
+          this._playTone(n, 0.3, "sawtooth", idx * 0.15, 0.22);
         });
       },
 
       playLevelMusic(levelId = "giza") {
         this.stopMusic();
         this.init();
+        this.beatCount = 0;
 
-        const themes = {
-          giza:  [293.66, 349.23, 440.0, 466.16, 587.33, 440.0],
-          luxor: [329.63, 392.0, 493.88, 523.25, 659.25, 523.25]
-        };
-        const scale = themes[levelId] || themes.giza;
-        let step = 0;
-
-        const playStep = () => {
-          if (!this.muted && this.volume > 0) {
-            const freq = scale[step % scale.length];
-            this._playTone(freq, 0.45, "triangle", 0, 0.28);
-            step++;
+        const tracks = {
+          giza: {
+            tempoMs: 210,
+            melody: [293.66, 311.13, 440.0, 466.16, 587.33, 466.16, 440.0, 311.13, 587.33, 622.25, 880.0, 587.33],
+            bass:   [146.83, 146.83, 220.0, 146.83, 155.56, 155.56, 220.0, 146.83]
+          },
+          luxor: {
+            tempoMs: 195,
+            melody: [329.63, 349.23, 493.88, 523.25, 659.25, 783.99, 659.25, 523.25, 493.88, 349.23, 659.25, 987.77],
+            bass:   [164.81, 164.81, 246.94, 164.81, 174.61, 174.61, 246.94, 164.81]
           }
-          this.musicTimer = setTimeout(playStep, 460);
         };
 
-        playStep();
+        const active = tracks[levelId] || tracks.giza;
+
+        const tick = () => {
+          if (!this.muted && this.volume > 0) {
+            const i = this.beatCount;
+            const note = active.melody[i % active.melody.length];
+            const bassNote = active.bass[i % active.bass.length];
+
+            this._playTone(note, (active.tempoMs / 1000) * 1.1, "sawtooth", 0, 0.16);
+            this._playTone(note * 0.5, (active.tempoMs / 1000) * 1.2, "triangle", 0, 0.22);
+
+            if (i % 2 === 0) {
+              this._playTone(bassNote, 0.2, "triangle", 0, 0.24);
+            }
+
+            if (i % 4 === 0) {
+              this._playDrum(155, 0.22, 0.52, 0);
+            } else if (i % 4 === 2) {
+              this._playDrum(135, 0.16, 0.36, 0);
+            } else if (i % 2 === 1) {
+              this._playDrum(185, 0.08, 0.22, 0);
+            }
+
+            this.beatCount++;
+          }
+          this.musicTimer = setTimeout(tick, active.tempoMs);
+        };
+
+        tick();
       },
 
       stopMusic() {
@@ -672,10 +853,8 @@
       }
     };
 
-    // تفعيل الصوت تلقائياً مع أول تفاعل للمستخدم
     document.addEventListener("pointerdown", () => SoundEngine.init(), { once: false });
 
-    // تهيئة Pi SDK
     if (window.Pi) {
       window.Pi.init({ version: "2.0", sandbox: true });
       window.Pi.authenticate(["username", "payments"], () => {})
@@ -688,6 +867,8 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
+      loadProgress();
+      regenLives();
       changeLang(state.lang);
       updateUI();
       setTimeout(() => {
@@ -697,7 +878,6 @@
       }, 1500);
     });
 
-    // محرك البازل المتداخل
     const canvas = document.getElementById("puzzle-canvas");
     const ctx = canvas.getContext("2d");
     let pieces = [], selected = null, dragOff = { x: 0, y: 0 }, zoom = 1, showPreview = false;
@@ -774,6 +954,7 @@
           clearInterval(timerId);
           SoundEngine.playGameOver();
           state.lives = Math.max(0, state.lives - 1);
+          saveProgress();
           updateUI();
           alert("Game Over!");
           setupPuzzle();
@@ -902,24 +1083,34 @@
         if (p) {
           p.x = p.correctX; p.y = p.correctY; p.rot = 0; p.locked = true;
           state.hints--;
+          saveProgress();
           SoundEngine.playSnap();
           updateUI(); drawBoard(); checkWin();
         }
       } else if (confirm("30s video reward for 1 Hint?")) {
-        state.hints++; updateUI();
+        state.hints++; saveProgress(); updateUI();
       }
     }
 
     function handleUseView() {
       if (state.views > 0) {
         state.views--;
+        saveProgress();
         SoundEngine.playClick();
         updateUI();
         showPreview = true; drawBoard();
         setTimeout(() => { showPreview = false; drawBoard(); }, 7000);
       } else if (confirm("30s video reward for 1 View?")) {
-        state.views++; updateUI();
+        state.views++; saveProgress(); updateUI();
       }
+    }
+
+    function unlockRandomArtifact() {
+      const remaining = CONFIG.ARTIFACTS.filter(a => !state.unlockedArtifactIds.includes(a.id));
+      if (!remaining.length) return null;
+      const chosen = remaining[Math.floor(Math.random() * remaining.length)];
+      state.unlockedArtifactIds.push(chosen.id);
+      return chosen;
     }
 
     function checkWin() {
@@ -938,16 +1129,16 @@
           state.coins += diff.coins; state.xp += diff.xp;
           msg = `+${diff.coins} Coin & +${diff.xp} XP`;
           if (diff.artifact) {
-            const art = CONFIG.ARTIFACTS[Math.floor(Math.random() * CONFIG.ARTIFACTS.length)];
-            if (!state.artifacts.some(a => a.name === art.name)) {
-              state.artifacts.push(art);
-              msg += ` + ${art.name}`;
+            const art = unlockRandomArtifact();
+            if (art) {
+              msg += ` + ${getLocalized(art.name)}`;
             }
           }
         } else {
           msg = "+0 (Already claimed first-time reward)";
         }
 
+        saveProgress();
         updateUI();
         SoundEngine.playWinFanfare();
         SoundEngine.playLevelMusic(lvl.id);
@@ -965,6 +1156,7 @@
       if (pick === "coins") { const c = [25, 50, 100][Math.floor(Math.random() * 3)]; state.coins += c; alert(`🎡 +${c} Coin!`); }
       if (pick === "hint") { state.hints++; alert("🎡 +1 Hint!"); }
       if (pick === "view") { state.views++; alert("🎡 +1 View!"); }
+      saveProgress();
       updateUI();
     }
 
@@ -975,6 +1167,7 @@
       const bonus = Math.random() > 0.5 ? "hint" : "view";
       state.coins += c;
       if (bonus === "hint") state.hints++; else state.views++;
+      saveProgress();
       updateUI();
       alert(`🎁 +${c} Coin + 1 ${bonus.toUpperCase()}`);
     }
@@ -991,6 +1184,7 @@
         if (state.viewBuys.count >= 3) return alert("Daily limit (3) reached.");
         state.coins -= price; state.views++; state.viewBuys.count++;
       }
+      saveProgress();
       updateUI();
       alert("Purchased!");
     }
@@ -1001,7 +1195,43 @@
       if (gained > 0) {
         state.lives = Math.min(CONFIG.MAX_LIVES, state.lives + gained);
         state.lastLifeTime = Date.now();
+        saveProgress();
       }
+    }
+
+    function openMuseumModal() {
+      document.getElementById("museum-detail-box").style.display = "none";
+      renderMuseum();
+      openModal("modal-museum");
+    }
+
+    function showArtifactDetail(id) {
+      const art = CONFIG.ARTIFACTS.find(a => a.id === id);
+      if (!art || !state.unlockedArtifactIds.includes(id)) return;
+      SoundEngine.playClick();
+      document.getElementById("detail-icon").textContent = art.icon;
+      document.getElementById("detail-name").textContent = getLocalized(art.name);
+      document.getElementById("detail-category").textContent = getLocalized(art.category);
+      document.getElementById("detail-desc").textContent = getLocalized(art.desc);
+      document.getElementById("museum-detail-box").style.display = "block";
+    }
+
+    function renderMuseum() {
+      const grid = document.getElementById("museum-grid");
+      const countEl = document.getElementById("museum-count");
+      if (!grid || !countEl) return;
+
+      countEl.textContent = `${state.unlockedArtifactIds.length} / ${CONFIG.ARTIFACTS.length}`;
+      grid.innerHTML = CONFIG.ARTIFACTS.map(art => {
+        const unlocked = state.unlockedArtifactIds.includes(art.id);
+        return `
+          <div class="artifact-card ${unlocked ? "" : "locked"}" onclick="${unlocked ? `showArtifactDetail('${art.id}')` : ""}">
+            <div style="font-size:2rem;">${unlocked ? art.icon : "🔒"}</div>
+            <div style="font-weight:bold; font-size:0.85rem; margin-top:4px;">${unlocked ? getLocalized(art.name) : "???"}</div>
+            <small style="font-size:0.75rem; color:#1abc9c;">${unlocked ? getLocalized(art.category) : "Hard Level"}</small>
+          </div>
+        `;
+      }).join("");
     }
 
     function updateUI() {
@@ -1012,13 +1242,12 @@
       document.getElementById("ui-views").textContent = state.views;
       const rank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp);
       document.getElementById("ui-rank").textContent = getLocalized(rank);
-      document.getElementById("museum-grid").innerHTML = state.artifacts.length
-        ? state.artifacts.map(a => `<div class="item-card"><div style="font-size:1.8rem;">${a.icon}</div><div>${a.name}</div></div>`).join("")
-        : "<p>🏺</p>";
+      renderMuseum();
     }
 
     function changeLang(l) {
       state.lang = l;
+      saveProgress();
       document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
       document.documentElement.lang = l;
       document.getElementById("lang-select").value = l;
@@ -1043,147 +1272,11 @@
       document.getElementById("screen-game").classList.remove("active");
       document.getElementById("screen-home").classList.add("active");
     }
-    // نظام الصوت والموسيقى الفرعونية الحماسية (إيقاع + لحن + طبول)
-    const SoundEngine = {
-      ctx: null,
-      volume: 0.8,
-      muted: false,
-      musicTimer: null,
-      beatCount: 0,
-
-      init() {
-        if (!this.ctx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (AudioCtx) this.ctx = new AudioCtx();
-        }
-        if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume().catch(() => {});
-        }
-      },
-
-      setVolume(val) {
-        this.init();
-        this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
-        this.muted = this.volume === 0;
-        this._playDrum(130, 0.12, 0.35);
-      },
-
-      _playTone(freq, duration = 0.25, type = "sawtooth", delay = 0, gainPeak = 0.22, slideTo = null) {
-        this.init();
-        if (!this.ctx || this.muted || this.volume <= 0) return;
-
-        const now = this.ctx.currentTime + delay;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, now);
-        if (slideTo) {
-          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
-        }
-
-        const finalGain = Math.min(0.75, gainPeak * this.volume);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(finalGain, now + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + duration + 0.03);
-      },
-
-      // ضربة طبلة فرعونية عميقة
-      _playDrum(startFreq = 140, duration = 0.22, gainPeak = 0.45, delay = 0) {
-        this._playTone(startFreq, duration, "sine", delay, gainPeak, 42);
-      },
-
-      playSnap() {
-        this._playTone(587.33, 0.11, "triangle", 0, 0.32);
-        this._playTone(880.0, 0.16, "sine", 0.05, 0.28);
-      },
-
-      playClick() {
-        this._playTone(523.25, 0.08, "triangle", 0, 0.2);
-      },
-
-      playWinFanfare() {
-        const fanfare = [440.0, 554.37, 659.25, 880.0, 1174.66];
-        fanfare.forEach((n, idx) => {
-          this._playTone(n, 0.22, "sawtooth", idx * 0.09, 0.25);
-          this._playTone(n / 2, 0.24, "triangle", idx * 0.09, 0.25);
-        });
-        this._playDrum(150, 0.3, 0.5, 0);
-        this._playDrum(150, 0.35, 0.55, 0.36);
-      },
-
-      playGameOver() {
-        const notes = [392.0, 349.23, 293.66, 220.0];
-        notes.forEach((n, idx) => {
-          this._playTone(n, 0.3, "sawtooth", idx * 0.15, 0.22);
-        });
-      },
-
-      // موسيقى فرعونية حماسية مختلفة لكل مستوى
-      playLevelMusic(levelId = "giza") {
-        this.stopMusic();
-        this.init();
-        this.beatCount = 0;
-
-        // مقام حجاز/شرقي حماسي مع قفزات أوكتاف
-        const tracks = {
-          giza: {
-            tempoMs: 210, // إيقاع سريع وحماسي
-            melody: [293.66, 311.13, 440.0, 466.16, 587.33, 466.16, 440.0, 311.13, 587.33, 622.25, 880.0, 587.33],
-            bass:   [146.83, 146.83, 220.0, 146.83, 155.56, 155.56, 220.0, 146.83]
-          },
-          luxor: {
-            tempoMs: 195, // إيقاع احتفالي أسرع لمعبد الكرنك والنيل
-            melody: [329.63, 349.23, 493.88, 523.25, 659.25, 783.99, 659.25, 523.25, 493.88, 349.23, 659.25, 987.77],
-            bass:   [164.81, 164.81, 246.94, 164.81, 174.61, 174.61, 246.94, 164.81]
-          }
-        };
-
-        const active = tracks[levelId] || tracks.giza;
-
-        const tick = () => {
-          if (!this.muted && this.volume > 0) {
-            const i = this.beatCount;
-            const note = active.melody[i % active.melody.length];
-            const bassNote = active.bass[i % active.bass.length];
-
-            // اللحن الرئيسي الحماسي
-            this._playTone(note, (active.tempoMs / 1000) * 1.1, "sawtooth", 0, 0.16);
-            this._playTone(note * 0.5, (active.tempoMs / 1000) * 1.2, "triangle", 0, 0.22);
-
-            // خط البيس المتحرك
-            if (i % 2 === 0) {
-              this._playTone(bassNote, 0.2, "triangle", 0, 0.24);
-            }
-
-            // إيقاع الطبول الفرعونية (ضربة قوية في بداية كل مازورة ونبضات متتابعة)
-            if (i % 4 === 0) {
-              this._playDrum(155, 0.22, 0.52, 0);
-            } else if (i % 4 === 2) {
-              this._playDrum(135, 0.16, 0.36, 0);
-            } else if (i % 2 === 1) {
-              this._playDrum(185, 0.08, 0.22, 0);
-            }
-
-            this.beatCount++;
-          }
-          this.musicTimer = setTimeout(tick, active.tempoMs);
-        };
-
-        tick();
-      },
-
-      stopMusic() {
-        if (this.musicTimer) {
-          clearTimeout(this.musicTimer);
-          this.musicTimer = null;
-        }
+    function closeWin() {
+      SoundEngine.stopMusic();
+      closeModal("modal-win");
+      exitToHome();
+    }
   </script>
 </body>
 </html>
