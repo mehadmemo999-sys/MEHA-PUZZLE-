@@ -73,10 +73,11 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(212, 175, 55, 0.3);
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
-    .stone-btn:hover { transform: translateY(-2px); }
+    .stone-btn:hover:not(:disabled) { transform: translateY(-2px); }
+    .stone-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .top-bar {
       display: flex;
@@ -172,7 +173,7 @@
       border: 3px solid var(--ancient-gold);
       border-radius: 18px;
       padding: 20px;
-      max-width: 540px;
+      max-width: 560px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
@@ -180,7 +181,7 @@
 
     .grid-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
       gap: 10px;
       margin-top: 12px;
     }
@@ -191,6 +192,38 @@
       border-radius: 12px;
       padding: 10px;
       text-align: center;
+    }
+
+    .ach-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(244, 228, 188, 0.35);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .ach-card.unlocked {
+      border-color: var(--bright-gold);
+      background: rgba(212, 175, 55, 0.14);
+    }
+
+    .title-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--ancient-gold);
+      background: rgba(7, 18, 43, 0.65);
+      font-size: 0.82rem;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .title-pill.active-title {
+      border-color: var(--turquoise);
+      background: rgba(26, 188, 156, 0.22);
+      color: #ffffff;
     }
 
     .artifact-card {
@@ -223,6 +256,21 @@
       text-align: start;
       display: none;
     }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .admin-stat {
+      background: rgba(7, 18, 43, 0.8);
+      border: 1px solid var(--turquoise);
+      border-radius: 10px;
+      padding: 8px;
+      font-size: 0.82rem;
+    }
   </style>
 </head>
 <body>
@@ -237,11 +285,14 @@
 
   <header class="top-bar">
     <div class="badge-box">
-      👑 <span id="ui-username" data-i18n="explorerDefault">Explorer</span> | <span id="ui-rank">🏺 Novice Explorer</span>
+      👑 <span id="ui-username" data-i18n="explorerDefault">Explorer</span> |
+      <span id="ui-rank">🏺 Novice Explorer</span> |
+      <span id="ui-active-title" style="color:#1abc9c;">🏷️ Explorer</span>
     </div>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
       <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
       <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
+      <button class="stone-btn" onclick="SoundEngine.playClick(); openAdminModal()" data-i18n="adminBtn">🛡️ Admin</button>
       <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">⚙️ Settings</button>
     </div>
   </header>
@@ -251,10 +302,11 @@
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
         <h3 data-i18n="profileTitle">🏛️ Profile</h3>
         <button class="stone-btn" onclick="SoundEngine.playClick(); openMuseumModal()" data-i18n="museumBtn">🏺 Museum</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-achievements')" data-i18n="achievementsBtn">🏅 Achievements</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openAchievementsModal()" data-i18n="achievementsBtn">🏅 Achievements</button>
         <div class="item-card">
           <small data-i18n="xpLabel">Experience XP</small>
           <div id="ui-xp" style="font-weight:bold; color:#ffd700;">0 XP</div>
+          <small id="ui-next-rank" style="display:block; margin-top:4px; color:#1abc9c;"></small>
         </div>
       </aside>
 
@@ -348,16 +400,42 @@
     </div>
   </div>
 
+  <!-- الإنجازات والألقاب + سلم رتب MEHA LEGEND -->
   <div id="modal-achievements" class="modal">
     <div class="modal-card">
       <h3 data-i18n="achievementsTitle">🏅 Achievements & Titles</h3>
-      <div class="grid-cards">
-        <div class="item-card" data-i18n="ach1">🏺 Relic Explorer</div>
-        <div class="item-card" data-i18n="ach2">🧩 Puzzle Master</div>
-        <div class="item-card" data-i18n="ach3">🗝️ Keeper of Secrets</div>
-        <div class="item-card" data-i18n="ach4">👑 MEHA Legend</div>
+      <div id="achievements-grid" class="grid-cards"></div>
+
+      <div style="margin-top:14px;">
+        <h4 style="color:#ffd700;" data-i18n="titlesSectionTitle">🏷️ Equip Title</h4>
+        <div id="titles-list" style="margin-top:6px;"></div>
       </div>
+
+      <div style="margin-top:14px;">
+        <h4 style="color:#1abc9c;" data-i18n="ranksLadderTitle">👑 MEHA LEGEND Rank Progression</h4>
+        <div id="ranks-ladder" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+
       <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-achievements')" data-i18n="closeBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- لوحة الإدارة (Admin Dashboard) -->
+  <div id="modal-admin" class="modal">
+    <div class="modal-card">
+      <h3 data-i18n="adminTitle">🛡️ Admin Dashboard</h3>
+      <div id="admin-stats" class="admin-grid"></div>
+
+      <div class="admin-grid" style="margin-top:12px;">
+        <button class="stone-btn" onclick="adminAddResources(500, 300)">🪙 +500 / ✨ +300 XP</button>
+        <button class="stone-btn" onclick="adminSetLegendRank()">👑 Unlock MEHA LEGEND</button>
+        <button class="stone-btn" onclick="adminRefillLivesAndTools()">❤️ Refill Lives & Tools</button>
+        <button class="stone-btn" onclick="adminUnlockAllMuseum()">🏺 Unlock All Museum</button>
+        <button class="stone-btn" onclick="adminResetDailyLimits()">🔄 Reset Daily Limits</button>
+        <button class="stone-btn" style="border-color:#e74c3c; color:#ff9f9f;" onclick="adminWipeAllData()">🗑️ Reset All Save</button>
+      </div>
+
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-admin')" data-i18n="closeBtn">Close</button>
     </div>
   </div>
 
@@ -365,10 +443,10 @@
     <div class="modal-card">
       <h3 data-i18n="settingsTitle">⚙️ Settings</h3>
       <div style="margin:12px 0;">
-        <label data-i18n="volumeLabel">🎵 Global Game Music Volume:</label>
+        <label data-i18n="volumeLabel">🪈 Pharaonic Flute Global Music Volume:</label>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-          <button class="stone-btn" onclick="SoundEngine.startGlobalMusic()" data-i18n="playMusicBtn">▶️ Play Global Music</button>
+          <button class="stone-btn" onclick="SoundEngine.startGlobalMusic()" data-i18n="playMusicBtn">▶️ Play Flute Music</button>
           <button class="stone-btn" onclick="SoundEngine.stopMusic()" data-i18n="stopMusicBtn">⏹️ Stop Music</button>
         </div>
       </div>
@@ -400,47 +478,120 @@
   </div>
 
   <script>
-    // مولد صور فرعونية مرسومة بدقة (SVG Data URI) لضمان تطابق الصورة مع وصفها 100%
-    function makeSvgScene(type) {
-      const svgs = {
-        golden_mask: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-          <rect width="800" height="800" fill="#0d2149"/>
-          <circle cx="400" cy="400" r="300" fill="#1abc9c" opacity="0.16"/>
-          <polygon points="400,130 610,330 560,670 240,670 190,330" fill="#ffd700" stroke="#d4af37" stroke-width="14"/>
-          <rect x="382" y="130" width="36" height="540" fill="#0d2149"/>
-          <rect x="270" y="340" width="95" height="36" rx="14" fill="#0d2149"/>
-          <rect x="435" y="340" width="95" height="36" rx="14" fill="#0d2149"/>
-          <polygon points="400,375 372,495 428,495" fill="#d4af37"/>
-          <path d="M295 575 Q400 635 505 575" stroke="#0d2149" stroke-width="14" fill="none" stroke-linecap="round"/>
-          <text x="400" y="745" text-anchor="middle" fill="#ffd700" font-size="38" font-weight="bold">GOLDEN MASK</text>
-        </svg>`,
-        step_pyramid: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-          <rect width="800" height="520" fill="#1b3b6f"/>
-          <rect y="520" width="800" height="280" fill="#d9a441"/>
-          <circle cx="640" cy="140" r="65" fill="#ffd700"/>
-          <rect x="330" y="180" width="140" height="65" fill="#e6c27a" stroke="#8c6223" stroke-width="5"/>
-          <rect x="265" y="245" width="270" height="75" fill="#e6c27a" stroke="#8c6223" stroke-width="5"/>
-          <rect x="200" y="320" width="400" height="85" fill="#e6c27a" stroke="#8c6223" stroke-width="5"/>
-          <rect x="135" y="405" width="530" height="115" fill="#e6c27a" stroke="#8c6223" stroke-width="5"/>
-          <text x="400" y="745" text-anchor="middle" fill="#0d2149" font-size="38" font-weight="bold">PYRAMID TEMPLE</text>
-        </svg>`,
-        nile_lotus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-          <rect width="800" height="450" fill="#0d2149"/>
-          <rect y="450" width="800" height="350" fill="#1abc9c"/>
-          <circle cx="400" cy="430" r="145" fill="#ffd700" opacity="0.92"/>
-          <ellipse cx="400" cy="470" rx="115" ry="42" fill="#2ecc71"/>
-          <path d="M400 465 C340 360, 270 390, 340 465 Z" fill="#f4e4bc"/>
-          <path d="M400 465 C460 360, 530 390, 460 465 Z" fill="#f4e4bc"/>
-          <path d="M400 465 C365 330, 435 330, 400 465 Z" fill="#ffffff"/>
-          <text x="400" y="745" text-anchor="middle" fill="#07122b" font-size="38" font-weight="bold">NILE LOTUS</text>
-        </svg>`
-      };
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgs[type] || svgs.golden_mask);
+    const sceneCanvas = document.createElement("canvas");
+    sceneCanvas.width = 360;
+    sceneCanvas.height = 360;
+    const sCtx = sceneCanvas.getContext("2d");
+
+    function renderSceneToBoardCanvas(sceneId) {
+      sCtx.clearRect(0, 0, 360, 360);
+
+      if (sceneId === "golden_mask_scene") {
+        sCtx.fillStyle = "#0d2149";
+        sCtx.fillRect(0, 0, 360, 360);
+
+        sCtx.fillStyle = "rgba(26, 188, 156, 0.22)";
+        sCtx.beginPath();
+        sCtx.arc(180, 175, 130, 0, Math.PI * 2);
+        sCtx.fill();
+
+        sCtx.fillStyle = "#ffd700";
+        sCtx.strokeStyle = "#b8860b";
+        sCtx.lineWidth = 5;
+        sCtx.beginPath();
+        sCtx.moveTo(180, 48);
+        sCtx.lineTo(278, 135);
+        sCtx.lineTo(255, 305);
+        sCtx.lineTo(105, 305);
+        sCtx.lineTo(82, 135);
+        sCtx.closePath();
+        sCtx.fill();
+        sCtx.stroke();
+
+        sCtx.strokeStyle = "#0d2149";
+        sCtx.lineWidth = 4;
+        [105, 125, 145, 215, 235, 255].forEach(x => {
+          sCtx.beginPath();
+          sCtx.moveTo(x, 120);
+          sCtx.lineTo(x, 295);
+          sCtx.stroke();
+        });
+
+        sCtx.fillStyle = "#0d2149";
+        sCtx.fillRect(122, 152, 40, 14);
+        sCtx.fillRect(198, 152, 40, 14);
+
+        sCtx.fillStyle = "#d4af37";
+        sCtx.beginPath();
+        sCtx.moveTo(180, 165);
+        sCtx.lineTo(166, 222);
+        sCtx.lineTo(194, 222);
+        sCtx.closePath();
+        sCtx.fill();
+
+        sCtx.strokeStyle = "#0d2149";
+        sCtx.lineWidth = 5;
+        sCtx.beginPath();
+        sCtx.arc(180, 240, 28, 0.2, Math.PI - 0.2);
+        sCtx.stroke();
+      } else if (sceneId === "step_pyramid_scene") {
+        sCtx.fillStyle = "#173766";
+        sCtx.fillRect(0, 0, 360, 235);
+
+        sCtx.fillStyle = "#d9a441";
+        sCtx.fillRect(0, 235, 360, 125);
+
+        sCtx.fillStyle = "#ffd700";
+        sCtx.beginPath();
+        sCtx.arc(290, 62, 28, 0, Math.PI * 2);
+        sCtx.fill();
+
+        const steps = [
+          { x: 145, y: 80,  w: 70,  h: 32 },
+          { x: 115, y: 112, w: 130, h: 36 },
+          { x: 85,  y: 148, w: 190, h: 40 },
+          { x: 55,  y: 188, w: 250, h: 47 }
+        ];
+        steps.forEach(st => {
+          sCtx.fillStyle = "#e8c57d";
+          sCtx.strokeStyle = "#7c551c";
+          sCtx.lineWidth = 3;
+          sCtx.fillRect(st.x, st.y, st.w, st.h);
+          sCtx.strokeRect(st.x, st.y, st.w, st.h);
+        });
+      } else {
+        sCtx.fillStyle = "#0d2149";
+        sCtx.fillRect(0, 0, 360, 200);
+        sCtx.fillStyle = "#1abc9c";
+        sCtx.fillRect(0, 200, 360, 160);
+
+        sCtx.fillStyle = "#ffd700";
+        sCtx.beginPath();
+        sCtx.arc(180, 190, 62, 0, Math.PI * 2);
+        sCtx.fill();
+
+        sCtx.fillStyle = "#2ecc71";
+        sCtx.beginPath();
+        sCtx.ellipse(180, 212, 56, 18, 0, 0, Math.PI * 2);
+        sCtx.fill();
+
+        sCtx.fillStyle = "#f4e4bc";
+        sCtx.beginPath();
+        sCtx.ellipse(152, 185, 22, 42, -0.35, 0, Math.PI * 2);
+        sCtx.ellipse(208, 185, 22, 42, 0.35, 0, Math.PI * 2);
+        sCtx.fill();
+
+        sCtx.fillStyle = "#ffffff";
+        sCtx.beginPath();
+        sCtx.ellipse(180, 178, 20, 48, 0, 0, Math.PI * 2);
+        sCtx.fill();
+      }
+
+      return sceneCanvas.toDataURL("image/png");
     }
 
     const CONFIG = {
-      // موسيقى عامة واحدة على مستوى اللعبة بالكامل
-      GLOBAL_MUSIC_URL: "", // ضعي هنا رابط ملف MP3 للموسيقى الفرعونية العامة إذا أردتِ
+      GLOBAL_MUSIC_URL: "",
       MAX_LIVES: 10,
       LIFE_REGEN_SEC: 240,
       DIFFS: {
@@ -453,7 +604,44 @@
         { minXp: 250,  en: "🧭 Archaeology Seeker", ar: "🧭 باحث الآثار", fr: "🧭 Chercheur d'Antiquités", zh: "🧭 文物寻宝者" },
         { minXp: 600,  en: "📜 Egyptologist", ar: "📜 عالم المصريات", fr: "📜 Égyptologue", zh: "📜 埃及学家" },
         { minXp: 1200, en: "👁️ Guardian of Secrets", ar: "👁️ حارس الأسرار", fr: "👁️ Gardien des Secrets", zh: "👁️ 秘密守护者" },
-        { minXp: 2500, en: "👑 Pharaoh Legend", ar: "👑 أسطورة الفراعنة", fr: "👑 Légende des Pharaons", zh: "👑 法老传奇" }
+        { minXp: 2000, en: "⚡ Royal Ascendant", ar: "⚡ الصاعد الملكي", fr: "⚡ Ascendant Royal", zh: "⚡ 王室升华者" },
+        { minXp: 3000, en: "👑 MEHA LEGEND", ar: "👑 أسطورة MEHA", fr: "👑 LÉGENDE MEHA", zh: "👑 MEHA 传奇" }
+      ],
+      ACHIEVEMENTS: [
+        {
+          id: "ach_first_win",
+          icon: "🧩",
+          title: { en: "Puzzle Master", ar: "خبير البازل", fr: "Maître du Puzzle", zh: "拼图大师" },
+          desc: { en: "Complete at least 1 puzzle.", ar: "أكمل لغزاً واحداً على الأقل.", fr: "Terminer au moins 1 puzzle.", zh: "完成至少 1 个拼图。" },
+          check: s => s.completedCount >= 1
+        },
+        {
+          id: "ach_relic_hunter",
+          icon: "🏺",
+          title: { en: "Relic Explorer", ar: "مستكشف الآثار", fr: "Explorateur de Reliques", zh: "文物探险家" },
+          desc: { en: "Unlock 3 museum items.", ar: "افتح 3 مقتنيات في المتحف.", fr: "Débloquer 3 objets du musée.", zh: "解锁 3 件博物馆藏品。" },
+          check: s => s.unlockedArtifactIds.length >= 3
+        },
+        {
+          id: "ach_keeper",
+          icon: "🗝️",
+          title: { en: "Keeper of Secrets", ar: "حارس الأسرار", fr: "Gardien des Secrets", zh: "秘密守护者" },
+          desc: { en: "Complete the Daily Lost Treasure puzzle.", ar: "أكمل اللغز اليومي للكنز المفقود.", fr: "Terminer l'énigme quotidienne.", zh: "完成每日失落宝藏谜题。" },
+          check: s => Boolean(s.dailyPuzzleDate)
+        },
+        {
+          id: "ach_meha_legend",
+          icon: "👑",
+          title: { en: "MEHA LEGEND", ar: "أسطورة MEHA", fr: "LÉGENDE MEHA", zh: "MEHA 传奇" },
+          desc: { en: "Reach 3000 XP to claim MEHA LEGEND.", ar: "اجمع 3000 XP لبلوغ أسطورة MEHA.", fr: "Atteindre 3000 XP pour LÉGENDE MEHA.", zh: "达到 3000 XP 成为 MEHA 传奇。" },
+          check: s => s.xp >= 3000
+        }
+      ],
+      TITLES: [
+        { id: "title_explorer", label: { en: "Explorer", ar: "مستكشف", fr: "Explorateur", zh: "探险家" }, unlock: () => true },
+        { id: "title_scribe", label: { en: "Temple Scribe", ar: "كاتب المعبد", fr: "Scribe du Temple", zh: "神庙文士" }, unlock: s => s.xp >= 250 },
+        { id: "title_curator", label: { en: "Royal Curator", ar: "أمين المتحف الملكي", fr: "Conservateur Royal", zh: "王室馆长" }, unlock: s => s.unlockedArtifactIds.length >= 2 },
+        { id: "title_legend", label: { en: "👑 MEHA LEGEND", ar: "👑 أسطورة MEHA", fr: "👑 LÉGENDE MEHA", zh: "👑 MEHA 传奇" }, unlock: s => s.xp >= 3000 }
       ],
       LEVELS: [
         {
@@ -464,7 +652,6 @@
             fr: "Masque d'Or du Pharaon",
             zh: "法老黄金面具"
           },
-          img: makeSvgScene("golden_mask"),
           fact: {
             en: "This image depicts a golden royal funerary mask with striped headdress detailing and blue-gold contrast inspired by ancient Egyptian royal artistry.",
             ar: "تُظهر هذه الصورة قناعاً جنائزياً ملكياً باللون الذهبي مع خطوط الغطاء الملكي وتباين الأزرق والذهبي المستوحى من الفن المصري القديم.",
@@ -480,7 +667,6 @@
             fr: "Pyramide à Degrés",
             zh: "阶梯金字塔"
           },
-          img: makeSvgScene("step_pyramid"),
           fact: {
             en: "This image shows a stepped stone pyramid rising above desert sands under a bright sun, reflecting early monumental stone architecture in ancient Egypt.",
             ar: "تُظهر هذه الصورة هرماً حجرياً مدرجاً يرتفع فوق رمال الصحراء تحت شمس مشرقة، وهو ما يعكس تطور العمارة الحجرية الضخمة في مصر القديمة.",
@@ -496,7 +682,6 @@
             fr: "Lotus sur le Nil",
             zh: "尼罗河莲花"
           },
-          img: makeSvgScene("nile_lotus"),
           fact: {
             en: "This image highlights lotus blossoms floating on calm waters, a motif closely associated with the Nile and rebirth in ancient Egyptian symbolism.",
             ar: "تُبرز هذه الصورة أزهار اللوتس فوق مياه هادئة، وهو رمز ارتبط بالنيل ومعاني التجدد في الحضارة المصرية القديمة.",
@@ -583,6 +768,7 @@
         en: {
           loading: "Opening the doors of the Pharaonic temple...",
           explorerDefault: "Explorer",
+          adminBtn: "🛡️ Admin",
           settingsBtn: "⚙️ Settings",
           profileTitle: "🏛️ Profile",
           museumBtn: "🏺 Museum",
@@ -608,13 +794,12 @@
           museumCollectedLabel: "Collected:",
           museumHint: "Tap any unlocked item to read its historical story.",
           achievementsTitle: "🏅 Achievements & Titles",
-          ach1: "🏺 Relic Explorer",
-          ach2: "🧩 Puzzle Master",
-          ach3: "🗝️ Keeper of Secrets",
-          ach4: "👑 MEHA Legend",
+          titlesSectionTitle: "🏷️ Equip Title",
+          ranksLadderTitle: "👑 MEHA LEGEND Rank Progression",
+          adminTitle: "🛡️ Admin Dashboard",
           settingsTitle: "⚙️ Settings",
-          volumeLabel: "🎵 Global Game Music Volume:",
-          playMusicBtn: "▶️ Play Global Music",
+          volumeLabel: "🪈 Pharaonic Flute Global Music Volume:",
+          playMusicBtn: "▶️ Play Flute Music",
           stopMusicBtn: "⏹️ Stop Music",
           langLabel: "🌐 Language:",
           saveCloseBtn: "Save & Close",
@@ -625,6 +810,7 @@
         ar: {
           loading: "جاري فتح أبواب المعبد الفرعوني...",
           explorerDefault: "مستكشف",
+          adminBtn: "🛡️ الإدارة",
           settingsBtn: "⚙️ الإعدادات",
           profileTitle: "🏛️ الملف الشخصي",
           museumBtn: "🏺 المتحف",
@@ -650,13 +836,12 @@
           museumCollectedLabel: "المقتنيات:",
           museumHint: "اضغط على أي قطعة مكتشفة لقراءة قصتها التاريخية.",
           achievementsTitle: "🏅 الإنجازات والألقاب",
-          ach1: "🏺 مستكشف الآثار",
-          ach2: "🧩 خبير البازل",
-          ach3: "🗝️ حارس الأسرار",
-          ach4: "👑 أسطورة MEHA",
+          titlesSectionTitle: "🏷️ تفعيل اللقب",
+          ranksLadderTitle: "👑 سلم رتب أسطورة MEHA",
+          adminTitle: "🛡️ لوحة الإدارة",
           settingsTitle: "⚙️ الإعدادات",
-          volumeLabel: "🎵 مستوى موسيقى اللعبة العامة:",
-          playMusicBtn: "▶️ تشغيل الموسيقى العامة",
+          volumeLabel: "🪈 مستوى موسيقى الناي الفرعوني العامة:",
+          playMusicBtn: "▶️ تشغيل موسيقى الناي",
           stopMusicBtn: "⏹️ إيقاف الموسيقى",
           langLabel: "🌐 اللغة:",
           saveCloseBtn: "حفظ وإغلاق",
@@ -667,6 +852,7 @@
         fr: {
           loading: "Ouverture des portes du temple pharaonique...",
           explorerDefault: "Explorateur",
+          adminBtn: "🛡️ Admin",
           settingsBtn: "⚙️ Paramètres",
           profileTitle: "🏛️ Profil",
           museumBtn: "🏺 Musée",
@@ -692,13 +878,12 @@
           museumCollectedLabel: "Collectés :",
           museumHint: "Touchez un élément débloqué pour lire son histoire.",
           achievementsTitle: "🏅 Succès & Titres",
-          ach1: "🏺 Explorateur de Reliques",
-          ach2: "🧩 Maître du Puzzle",
-          ach3: "🗝️ Gardien des Secrets",
-          ach4: "👑 Légende MEHA",
+          titlesSectionTitle: "🏷️ Équiper un Titre",
+          ranksLadderTitle: "👑 Progression des Rangs MEHA LEGEND",
+          adminTitle: "🛡️ Tableau Admin",
           settingsTitle: "⚙️ Paramètres",
-          volumeLabel: "🎵 Volume de la Musique Générale :",
-          playMusicBtn: "▶️ Lancer Musique Générale",
+          volumeLabel: "🪈 Volume Flûte Pharaonique Générale :",
+          playMusicBtn: "▶️ Lancer Flûte Générale",
           stopMusicBtn: "⏹️ Arrêter Musique",
           langLabel: "🌐 Langue :",
           saveCloseBtn: "Enregistrer & Fermer",
@@ -709,6 +894,7 @@
         zh: {
           loading: "正在打开法老神庙的大门...",
           explorerDefault: "探险家",
+          adminBtn: "🛡️ 管理",
           settingsBtn: "⚙️ 设置",
           profileTitle: "🏛️ 个人资料",
           museumBtn: "🏺 博物馆",
@@ -734,13 +920,12 @@
           museumCollectedLabel: "已收集：",
           museumHint: "点击已解锁的藏品查看历史故事。",
           achievementsTitle: "🏅 成就与头衔",
-          ach1: "🏺 文物探险家",
-          ach2: "🧩 拼图大师",
-          ach3: "🗝️ 秘密守护者",
-          ach4: "👑 MEHA 传奇",
+          titlesSectionTitle: "🏷️ 装备头衔",
+          ranksLadderTitle: "👑 MEHA LEGEND 军衔进阶",
+          adminTitle: "🛡️ 管理后台",
           settingsTitle: "⚙️ 设置",
-          volumeLabel: "🎵 全局游戏音乐音量：",
-          playMusicBtn: "▶️ 播放全局音乐",
+          volumeLabel: "🪈 法老长笛全局音乐音量：",
+          playMusicBtn: "▶️ 播放长笛音乐",
           stopMusicBtn: "⏹️ 停止音乐",
           langLabel: "🌐 语言：",
           saveCloseBtn: "保存并关闭",
@@ -751,24 +936,30 @@
       }
     };
 
-    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V4_EN";
+    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V6_FULL";
 
-    const state = {
-      lang: "en",
-      coins: 150,
-      xp: 0,
-      hints: 3,
-      views: 3,
-      lives: 10,
-      lastLifeTime: Date.now(),
-      claimedLevels: [],
-      unlockedArtifactIds: [],
-      wheelDate: null,
-      boxDate: null,
-      dailyPuzzleDate: null,
-      hintBuys: { date: "", count: 0 },
-      viewBuys: { date: "", count: 0 }
-    };
+    function createDefaultState() {
+      return {
+        lang: "en",
+        coins: 150,
+        xp: 0,
+        hints: 3,
+        views: 3,
+        lives: 10,
+        lastLifeTime: Date.now(),
+        completedCount: 0,
+        activeTitleId: "title_explorer",
+        claimedLevels: [],
+        unlockedArtifactIds: [],
+        wheelDate: null,
+        boxDate: null,
+        dailyPuzzleDate: null,
+        hintBuys: { date: "", count: 0 },
+        viewBuys: { date: "", count: 0 }
+      };
+    }
+
+    const state = createDefaultState();
 
     function saveProgress() {
       try {
@@ -783,7 +974,9 @@
         const parsed = JSON.parse(raw);
         Object.assign(state, parsed);
         if (!Array.isArray(state.unlockedArtifactIds)) state.unlockedArtifactIds = [];
+        if (!Array.isArray(state.claimedLevels)) state.claimedLevels = [];
         if (!state.lang) state.lang = "en";
+        if (!state.activeTitleId) state.activeTitleId = "title_explorer";
       } catch (e) {}
     }
 
@@ -794,7 +987,7 @@
       volume: 0.8,
       muted: false,
       musicTimer: null,
-      beatCount: 0,
+      noteIndex: 0,
       audioEl: null,
       isPlayingGlobal: false,
 
@@ -813,56 +1006,50 @@
         this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
         this.muted = this.volume === 0;
         if (this.audioEl) this.audioEl.volume = this.volume;
-        this._playDrum(140, 0.14, 0.45);
+        this._playFluteNote(587.33, 0.25, 0.22);
       },
 
-      _playTone(freq, duration = 0.25, type = "triangle", delay = 0, gainPeak = 0.22, slideTo = null) {
+      _playFluteNote(freq, duration = 0.65, gainPeak = 0.22, slideTarget = null) {
         this.init();
         if (!this.ctx || this.muted || this.volume <= 0) return;
 
-        const now = this.ctx.currentTime + delay;
+        const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+        const breathGain = this.ctx.createGain();
 
-        osc.type = type;
+        osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now);
-        if (slideTo) {
-          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        if (slideTarget) {
+          osc.frequency.linearRampToValueAtTime(slideTarget, now + duration * 0.7);
         }
 
-        const finalGain = Math.min(0.75, gainPeak * this.volume);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(finalGain, now + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+        const peak = Math.min(0.55, gainPeak * this.volume);
+        breathGain.gain.setValueAtTime(0.0008, now);
+        breathGain.gain.linearRampToValueAtTime(peak, now + 0.14);
+        breathGain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
 
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        osc.connect(breathGain);
+        breathGain.connect(this.ctx.destination);
 
         osc.start(now);
-        osc.stop(now + duration + 0.03);
-      },
-
-      _playDrum(startFreq = 150, duration = 0.2, gainPeak = 0.5, delay = 0) {
-        this._playTone(startFreq, duration, "sine", delay, gainPeak, 45);
+        osc.stop(now + duration + 0.04);
       },
 
       playSnap() {
-        this._playTone(587.33, 0.11, "triangle", 0, 0.32);
-        this._playTone(880.0, 0.16, "sine", 0.05, 0.28);
+        this._playFluteNote(659.25, 0.22, 0.26, 783.99);
       },
 
       playClick() {
-        this._playTone(523.25, 0.08, "triangle", 0, 0.2);
+        this._playFluteNote(523.25, 0.14, 0.18);
       },
 
       playWinFanfare() {
-        this._playDrum(160, 0.24, 0.5, 0);
-        this._playTone(659.25, 0.22, "triangle", 0.05, 0.25);
+        this._playFluteNote(587.33, 0.35, 0.25);
+        setTimeout(() => this._playFluteNote(783.99, 0.5, 0.28, 880.0), 220);
       },
 
       playGameOver() {
-        this._playDrum(120, 0.35, 0.45, 0);
-        this._playTone(293.66, 0.3, "triangle", 0.12, 0.2);
+        this._playFluteNote(440.0, 0.45, 0.2, 349.23);
       },
 
       startGlobalMusic() {
@@ -878,22 +1065,26 @@
           return;
         }
 
-        const globalPattern = ["dum", "tak", "tak", "dum", "tak", "dum", "tak", "tak"];
-        const beatLoop = () => {
+        const fluteNotes = [
+          { f: 440.0,  d: 0.75, s: 466.16 },
+          { f: 466.16, d: 0.70, s: 587.33 },
+          { f: 587.33, d: 0.85, s: 659.25 },
+          { f: 659.25, d: 0.65, s: 587.33 },
+          { f: 587.33, d: 0.80, s: 466.16 },
+          { f: 466.16, d: 0.90, s: 440.0  }
+        ];
+
+        const playNextFlute = () => {
           if (!this.isPlayingGlobal) return;
           if (!this.muted && this.volume > 0) {
-            const hit = globalPattern[this.beatCount % globalPattern.length];
-            if (hit === "dum") {
-              this._playDrum(155, 0.19, 0.48, 0);
-            } else {
-              this._playDrum(235, 0.08, 0.24, 0);
-            }
-            this.beatCount++;
+            const item = fluteNotes[this.noteIndex % fluteNotes.length];
+            this._playFluteNote(item.f, item.d, 0.2, item.s);
+            this.noteIndex++;
           }
-          this.musicTimer = setTimeout(beatLoop, 220);
+          this.musicTimer = setTimeout(playNextFlute, 720);
         };
 
-        beatLoop();
+        playNextFlute();
       },
 
       stopMusic() {
@@ -941,8 +1132,6 @@
     const canvas = document.getElementById("puzzle-canvas");
     const ctx = canvas.getContext("2d");
     let pieces = [], selected = null, dragOff = { x: 0, y: 0 }, zoom = 1, showPreview = false;
-    const imgObj = new Image();
-    imgObj.crossOrigin = "anonymous";
 
     let timerId = null, timeLeft = 0, currentGame = null;
 
@@ -976,34 +1165,33 @@
       zoom = 1;
       showPreview = false;
 
+      renderSceneToBoardCanvas(currentGame.lvl.id);
+
       const { rows, cols, rotate, timeSec } = currentGame.diff;
-      imgObj.onload = () => {
-        const bx = 35, by = 30, bw = 360, bh = 360;
-        const pw = bw / cols, ph = bh / rows;
-        const hEdges = Array.from({ length: rows + 1 }, () => Array(cols).fill(0));
-        const vEdges = Array.from({ length: rows }, () => Array(cols + 1).fill(0));
+      const bx = 35, by = 30, bw = 360, bh = 360;
+      const pw = bw / cols, ph = bh / rows;
+      const hEdges = Array.from({ length: rows + 1 }, () => Array(cols).fill(0));
+      const vEdges = Array.from({ length: rows }, () => Array(cols + 1).fill(0));
 
-        for (let r = 1; r < rows; r++) for (let c = 0; c < cols; c++) hEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
-        for (let r = 0; r < rows; r++) for (let c = 1; c < cols; c++) vEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
+      for (let r = 1; r < rows; r++) for (let c = 0; c < cols; c++) hEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
+      for (let r = 0; r < rows; r++) for (let c = 1; c < cols; c++) vEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
 
-        pieces = [];
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            pieces.push({
-              r, c, pw, ph,
-              correctX: bx + c * pw,
-              correctY: by + r * ph,
-              x: 425 + Math.random() * 170,
-              y: 35 + Math.random() * 310,
-              rot: rotate ? [0, 90, 180, 270][Math.floor(Math.random() * 4)] : 0,
-              locked: false,
-              edges: { top: -hEdges[r][c], bottom: hEdges[r + 1][c], left: -vEdges[r][c], right: vEdges[r][c + 1] }
-            });
-          }
+      pieces = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          pieces.push({
+            r, c, pw, ph,
+            correctX: bx + c * pw,
+            correctY: by + r * ph,
+            x: 425 + Math.random() * 170,
+            y: 35 + Math.random() * 310,
+            rot: rotate ? [0, 90, 180, 270][Math.floor(Math.random() * 4)] : 0,
+            locked: false,
+            edges: { top: -hEdges[r][c], bottom: hEdges[r + 1][c], left: -vEdges[r][c], right: vEdges[r][c + 1] }
+          });
         }
-        drawBoard();
-      };
-      imgObj.src = currentGame.lvl.img;
+      }
+      drawBoard();
 
       clearInterval(timerId);
       timeLeft = timeSec;
@@ -1056,7 +1244,7 @@
 
       if (showPreview) {
         ctx.globalAlpha = 0.85;
-        ctx.drawImage(imgObj, 35, 30, 360, 360);
+        ctx.drawImage(sceneCanvas, 35, 30, 360, 360);
         ctx.globalAlpha = 1;
       }
 
@@ -1068,8 +1256,20 @@
         drawPath(p);
         ctx.save();
         ctx.clip();
-        const sx = imgObj.width / 360, sy = imgObj.height / 360, pad = Math.max(p.pw, p.ph) * 0.3;
-        ctx.drawImage(imgObj, (p.c * p.pw - pad) * sx, (p.r * p.ph - pad) * sy, (p.pw + pad * 2) * sx, (p.ph + pad * 2) * sy, -pad, -pad, p.pw + pad * 2, p.ph + pad * 2);
+
+        const pad = Math.max(p.pw, p.ph) * 0.3;
+        ctx.drawImage(
+          sceneCanvas,
+          p.c * p.pw - pad,
+          p.r * p.ph - pad,
+          p.pw + pad * 2,
+          p.ph + pad * 2,
+          -pad,
+          -pad,
+          p.pw + pad * 2,
+          p.ph + pad * 2
+        );
+
         ctx.restore();
         ctx.strokeStyle = p.locked ? "#1abc9c" : "#0d2149";
         ctx.lineWidth = 2;
@@ -1177,6 +1377,7 @@
     function checkWin() {
       if (pieces.length && pieces.every(p => p.locked)) {
         clearInterval(timerId);
+        state.completedCount = (state.completedCount || 0) + 1;
         const { lvl, diffKey, diff, isDaily } = currentGame;
         const key = `${lvl.id}_${diffKey}`;
         let msg = "";
@@ -1202,7 +1403,7 @@
         saveProgress();
         updateUI();
         SoundEngine.playWinFanfare();
-        document.getElementById("win-scene-img").src = lvl.img;
+        document.getElementById("win-scene-img").src = renderSceneToBoardCanvas(lvl.id);
         document.getElementById("win-scene-title").textContent = getLocalized(lvl.title);
         document.getElementById("win-rewards").textContent = msg;
         document.getElementById("win-fact").textContent = getLocalized(lvl.fact);
@@ -1296,14 +1497,157 @@
       }).join("");
     }
 
+    function equipTitle(titleId) {
+      const t = CONFIG.TITLES.find(item => item.id === titleId);
+      if (!t || !t.unlock(state)) return;
+      SoundEngine.playClick();
+      state.activeTitleId = titleId;
+      saveProgress();
+      updateUI();
+      renderAchievementsAndRanks();
+    }
+
+    function renderAchievementsAndRanks() {
+      const achGrid = document.getElementById("achievements-grid");
+      const titlesBox = document.getElementById("titles-list");
+      const ladderBox = document.getElementById("ranks-ladder");
+      if (!achGrid || !titlesBox || !ladderBox) return;
+
+      achGrid.innerHTML = CONFIG.ACHIEVEMENTS.map(ach => {
+        const done = ach.check(state);
+        return `
+          <div class="ach-card ${done ? "unlocked" : ""}">
+            <div style="font-size:1.7rem;">${done ? ach.icon : "🔒"}</div>
+            <div style="font-weight:bold; font-size:0.85rem; margin-top:4px; color:${done ? "#ffd700" : "#f4e4bc"};">${getLocalized(ach.title)}</div>
+            <small style="display:block; margin-top:4px; font-size:0.74rem; opacity:0.9;">${getLocalized(ach.desc)}</small>
+          </div>
+        `;
+      }).join("");
+
+      titlesBox.innerHTML = CONFIG.TITLES.map(t => {
+        const canUse = t.unlock(state);
+        const isEquipped = state.activeTitleId === t.id;
+        return `
+          <button class="title-pill ${isEquipped ? "active-title" : ""}" ${canUse ? "" : "disabled"} onclick="equipTitle('${t.id}')">
+            ${canUse ? "🏷️" : "🔒"} ${getLocalized(t.label)} ${isEquipped ? "✓" : ""}
+          </button>
+        `;
+      }).join("");
+
+      const currentRank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp) || CONFIG.RANKS[0];
+      ladderBox.innerHTML = CONFIG.RANKS.map(r => {
+        const reached = state.xp >= r.minXp;
+        const isCurrent = currentRank.minXp === r.minXp;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-radius:10px; border:1px solid ${isCurrent ? "#1abc9c" : (reached ? "#d4af37" : "rgba(244,228,188,0.25)")}; background:${reached ? "rgba(212,175,55,0.12)" : "rgba(7,18,43,0.5)"}; font-size:0.85rem;">
+            <span>${getLocalized(r)}</span>
+            <strong style="color:#ffd700;">${r.minXp} XP</strong>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function openAchievementsModal() {
+      renderAchievementsAndRanks();
+      openModal("modal-achievements");
+    }
+
+    function renderAdminStats() {
+      const box = document.getElementById("admin-stats");
+      if (!box) return;
+      const currentRank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp) || CONFIG.RANKS[0];
+      box.innerHTML = `
+        <div class="admin-stat">🪙 Coins: <strong>${state.coins}</strong></div>
+        <div class="admin-stat">✨ XP: <strong>${state.xp}</strong></div>
+        <div class="admin-stat">👑 Rank: <strong>${getLocalized(currentRank)}</strong></div>
+        <div class="admin-stat">🧩 Wins: <strong>${state.completedCount || 0}</strong></div>
+        <div class="admin-stat">🏺 Museum: <strong>${state.unlockedArtifactIds.length}/${CONFIG.ARTIFACTS.length}</strong></div>
+        <div class="admin-stat">❤️ Lives: <strong>${state.lives}/${CONFIG.MAX_LIVES}</strong></div>
+      `;
+    }
+
+    function openAdminModal() {
+      renderAdminStats();
+      openModal("modal-admin");
+    }
+
+    function adminAddResources(coinsAmt, xpAmt) {
+      state.coins += coinsAmt;
+      state.xp += xpAmt;
+      saveProgress();
+      updateUI();
+      renderAdminStats();
+    }
+
+    function adminSetLegendRank() {
+      state.xp = Math.max(state.xp, 3000);
+      state.activeTitleId = "title_legend";
+      saveProgress();
+      updateUI();
+      renderAdminStats();
+    }
+
+    function adminRefillLivesAndTools() {
+      state.lives = CONFIG.MAX_LIVES;
+      state.hints = Math.max(state.hints, 5);
+      state.views = Math.max(state.views, 5);
+      saveProgress();
+      updateUI();
+      renderAdminStats();
+    }
+
+    function adminUnlockAllMuseum() {
+      state.unlockedArtifactIds = CONFIG.ARTIFACTS.map(a => a.id);
+      saveProgress();
+      updateUI();
+      renderAdminStats();
+    }
+
+    function adminResetDailyLimits() {
+      state.wheelDate = null;
+      state.boxDate = null;
+      state.dailyPuzzleDate = null;
+      state.hintBuys = { date: todayStr(), count: 0 };
+      state.viewBuys = { date: todayStr(), count: 0 };
+      saveProgress();
+      renderAdminStats();
+      alert("Daily limits reset!");
+    }
+
+    function adminWipeAllData() {
+      if (!confirm("Reset all saved progress?")) return;
+      const fresh = createDefaultState();
+      fresh.lang = state.lang;
+      Object.assign(state, fresh);
+      saveProgress();
+      updateUI();
+      renderAdminStats();
+    }
+
     function updateUI() {
       document.getElementById("ui-coins").textContent = state.coins;
       document.getElementById("ui-lives").textContent = state.lives;
       document.getElementById("ui-xp").textContent = `${state.xp} XP`;
       document.getElementById("ui-hints").textContent = state.hints;
       document.getElementById("ui-views").textContent = state.views;
-      const rank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp);
+
+      const rank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp) || CONFIG.RANKS[0];
       document.getElementById("ui-rank").textContent = getLocalized(rank);
+
+      const nextRank = CONFIG.RANKS.find(r => r.minXp > state.xp);
+      const nextEl = document.getElementById("ui-next-rank");
+      if (nextEl) {
+        nextEl.textContent = nextRank
+          ? `Next: ${getLocalized(nextRank)} (${nextRank.minXp} XP)`
+          : "👑 MAX RANK REACHED";
+      }
+
+      const activeTitleObj = CONFIG.TITLES.find(t => t.id === state.activeTitleId) || CONFIG.TITLES[0];
+      const titleEl = document.getElementById("ui-active-title");
+      if (titleEl) {
+        titleEl.textContent = `🏷️ ${getLocalized(activeTitleObj.label)}`;
+      }
+
       renderMuseum();
     }
 
