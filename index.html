@@ -365,12 +365,11 @@
     <div class="modal-card">
       <h3 data-i18n="settingsTitle">⚙️ الإعدادات</h3>
       <div style="margin:12px 0;">
-        <label data-i18n="volumeLabel">🎵 مستوى الصوت والموسيقى:</label>
+        <label data-i18n="volumeLabel">🎵 مستوى موسيقى اللعبة العامة:</label>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-          <button class="stone-btn" onclick="SoundEngine.playLevelMusic('giza')" data-i18n="testMusicBtn">🥁 إيقاع الجيزة</button>
-          <button class="stone-btn" onclick="SoundEngine.playLevelMusic('luxor')" data-i18n="testLuxorBtn">🥁 إيقاع الأقصر</button>
-          <button class="stone-btn" onclick="SoundEngine.stopMusic()" data-i18n="stopMusicBtn">⏹️ إيقاف</button>
+          <button class="stone-btn" onclick="SoundEngine.startGlobalMusic()" data-i18n="playMusicBtn">▶️ تشغيل الموسيقى العامة</button>
+          <button class="stone-btn" onclick="SoundEngine.stopMusic()" data-i18n="stopMusicBtn">⏹️ إيقاف الموسيقى</button>
         </div>
       </div>
       <div style="margin:12px 0;">
@@ -382,17 +381,18 @@
           <option value="zh">中文</option>
         </select>
       </div>
-      <button class="stone-btn" style="width:100%;" onclick="SoundEngine.playClick(); SoundEngine.stopMusic(); closeModal('modal-settings')" data-i18n="saveCloseBtn">حفظ وإغلاق</button>
+      <button class="stone-btn" style="width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-settings')" data-i18n="saveCloseBtn">حفظ وإغلاق</button>
     </div>
   </div>
 
   <div id="modal-win" class="modal">
     <div class="modal-card" style="text-align:center;">
       <h2 style="color:#ffd700;" data-i18n="winTitle">🎉 أحسنت! تم إكمال البازل</h2>
+      <img id="win-scene-img" src="" alt="" style="width:140px; height:95px; object-fit:cover; border-radius:10px; border:2px solid var(--ancient-gold); margin-top:8px;" />
       <h4 id="win-scene-title" style="color:#1abc9c; margin-top:6px;"></h4>
       <p id="win-rewards" style="margin:10px 0; font-weight:bold;"></p>
       <div class="item-card" style="text-align:start;">
-        <h4 data-i18n="factTitle">📜 معلومة مطابقة للصورة:</h4>
+        <h4 data-i18n="factTitle">📜 معلومة هذه الصورة تحديداً:</h4>
         <p id="win-fact" style="margin-top:6px; line-height:1.6;"></p>
       </div>
       <button class="stone-btn" style="margin-top:14px;" onclick="closeWin()" data-i18n="continueBtn">متابعة</button>
@@ -401,6 +401,8 @@
 
   <script>
     const CONFIG = {
+      // موسيقى عامة واحدة على مستوى اللعبة بالكامل
+      GLOBAL_MUSIC_URL: "", // ضعي هنا رابط ملف MP3 للموسيقى الفرعونية العامة إذا أردتِ
       MAX_LIVES: 10,
       LIFE_REGEN_SEC: 240,
       DIFFS: {
@@ -415,42 +417,38 @@
         { minXp: 1200, ar: "👁️ حارس الأسرار",      en: "👁️ Guardian of Secrets", fr: "👁️ Gardien des Secrets", zh: "👁️ 秘密守护者" },
         { minXp: 2500, ar: "👑 أسطورة الفراعنة",   en: "👑 Pharaoh Legend", fr: "👑 Légende des Pharaons", zh: "👑 法老传奇" }
       ],
-      // كل صورة مرتبطة بمعرّفها ومعلومة تاريخية دقيقة ومطابقة لها تماماً
+      // كل صورة مرتبطة بمعلومة واحدة دقيقة ومباشرة تخص هذه الصورة فقط
       LEVELS: [
         {
-          id: "giza_pyramids",
-          musicTheme: "giza",
-          audioUrl: "", // يمكنكِ وضع رابط ملف MP3 فرعوني هنا إن رغبتِ
+          id: "pyramids_giza",
           title: {
-            ar: "أهرامات الجيزة وأبو الهول",
-            en: "Giza Pyramids & Sphinx",
-            fr: "Pyramides de Gizeh & Sphinx",
-            zh: "吉萨金字塔与狮身人面像"
+            ar: "أهرامات الجيزة",
+            en: "Pyramids of Giza",
+            fr: "Pyramides de Gizeh",
+            zh: "吉萨金字塔"
           },
           img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=800&q=80",
           fact: {
-            ar: "شُيّدت أهرامات الجيزة في عصر الدولة القديمة لتكون مقابر ملكية، ويُعد الهرم الأكبر للملك خوفو أقدم عجائب الدنيا السبع القديمة وأطول بناء شيده الإنسان لآلاف السنين.",
-            en: "Built during the Old Kingdom as royal tombs, the Great Pyramid of Khufu is the oldest of the Seven Wonders of the Ancient World and stood as the tallest human-made structure for millennia.",
-            fr: "Érigées sous l'Ancien Empire comme sépultures royales, les pyramides de Gizeh abritent la Grande Pyramide de Khéops, la plus ancienne des sept merveilles du monde antique.",
-            zh: "吉萨金字塔建于古王国时期，是法老的陵墓；其中胡夫金字塔是古代世界七大奇迹中最古老的一座。"
+            ar: "تقع أهرامات الجيزة غرب القاهرة، وقد بُنيت كأضرحة ملكية في الدولة القديمة واشتهرت بدقة بنائها الحجري.",
+            en: "Located west of Cairo, the Giza Pyramids were built as royal tombs in the Old Kingdom and are famous for their stone masonry.",
+            fr: "Situées à l'ouest du Caire, les pyramides de Gizeh ont été construites comme sépultures royales sous l'Ancien Empire.",
+            zh: "吉萨金字塔位于开罗以西，建于古王国时期，是法老陵墓并以精湛的石造工艺闻名。"
           }
         },
         {
-          id: "karnak_temple",
-          musicTheme: "luxor",
-          audioUrl: "",
+          id: "karnak_columns",
           title: {
-            ar: "معبد الكرنك في الأقصر",
-            en: "Karnak Temple in Luxor",
-            fr: "Temple de Karnak à Louxor",
-            zh: "卢克索卡尔纳克神庙"
+            ar: "أعمدة معبد الكرنك",
+            en: "Karnak Temple Columns",
+            fr: "Colonnes du Temple de Karnak",
+            zh: "卡尔纳克神庙石柱"
           },
           img: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=800&q=80",
           fact: {
-            ar: "يُعد مجمع معابد الكرنك في الأقصر من أكبر دور العبادة القديمة في العالم، وقد شارك في بنائه وتوسعته عدد من ملوك الفراعنة عبر قرون طويلة تكريساً لثالوث طيبة.",
-            en: "The Karnak Temple Complex in Luxor is one of the largest ancient religious complexes ever built, expanded across centuries by multiple pharaohs.",
-            fr: "Le complexe de Karnak à Louxor est l'un des plus vastes ensembles religieux antiques, agrandi au fil des siècles par plusieurs pharaons.",
-            zh: "卢克索卡尔纳克神庙建筑群是世界上规模最大的古代宗教建筑群之一，历经多位法老扩建。"
+            ar: "تتميز معابد الكرنك في الأقصر بقاعاتها الضخمة وأعمدتها المزينة بالنقوش الهيروغليفية التي توثق طقوس وعقائد المصريين القدماء.",
+            en: "Karnak temples in Luxor are renowned for vast halls and columns carved with hieroglyphs depicting ancient Egyptian rituals.",
+            fr: "Les temples de Karnak à Louxor sont célèbres pour leurs grandes salles et colonnes gravées de hiéroglyphes.",
+            zh: "卢克索卡尔纳克神庙以宏大的厅堂和刻有象形文字的巨柱而闻名，记录了古埃及礼仪与信仰。"
           }
         }
       ],
@@ -562,14 +560,13 @@
           ach3: "🗝️ حارس الأسرار",
           ach4: "👑 أسطورة MEHA",
           settingsTitle: "⚙️ الإعدادات",
-          volumeLabel: "🎵 مستوى الصوت والموسيقى:",
-          testMusicBtn: "🥁 إيقاع الجيزة",
-          testLuxorBtn: "🥁 إيقاع الأقصر",
-          stopMusicBtn: "⏹️ إيقاف",
+          volumeLabel: "🎵 مستوى موسيقى اللعبة العامة:",
+          playMusicBtn: "▶️ تشغيل الموسيقى العامة",
+          stopMusicBtn: "⏹️ إيقاف الموسيقى",
           langLabel: "🌐 اللغة:",
           saveCloseBtn: "حفظ وإغلاق",
           winTitle: "🎉 أحسنت! تم إكمال البازل",
-          factTitle: "📜 معلومة مطابقة للصورة:",
+          factTitle: "📜 معلومة هذه الصورة تحديداً:",
           continueBtn: "متابعة"
         },
         en: {
@@ -605,14 +602,13 @@
           ach3: "🗝️ Keeper of Secrets",
           ach4: "👑 MEHA Legend",
           settingsTitle: "⚙️ Settings",
-          volumeLabel: "🎵 Sound & Music Volume:",
-          testMusicBtn: "🥁 Giza Beat",
-          testLuxorBtn: "🥁 Luxor Beat",
-          stopMusicBtn: "⏹️ Stop",
+          volumeLabel: "🎵 Global Game Music Volume:",
+          playMusicBtn: "▶️ Play Global Music",
+          stopMusicBtn: "⏹️ Stop Music",
           langLabel: "🌐 Language:",
           saveCloseBtn: "Save & Close",
           winTitle: "🎉 Great Job! Puzzle Completed",
-          factTitle: "📜 Fact Matching This Image:",
+          factTitle: "📜 Fact About This Exact Image:",
           continueBtn: "Continue"
         },
         fr: {
@@ -648,14 +644,13 @@
           ach3: "🗝️ Gardien des Secrets",
           ach4: "👑 Légende MEHA",
           settingsTitle: "⚙️ Paramètres",
-          volumeLabel: "🎵 Volume Son & Musique :",
-          testMusicBtn: "🥁 Rythme Gizeh",
-          testLuxorBtn: "🥁 Rythme Louxor",
-          stopMusicBtn: "⏹️ Stop",
+          volumeLabel: "🎵 Volume de la Musique Générale :",
+          playMusicBtn: "▶️ Lancer Musique Générale",
+          stopMusicBtn: "⏹️ Arrêter Musique",
           langLabel: "🌐 Langue :",
           saveCloseBtn: "Enregistrer & Fermer",
           winTitle: "🎉 Bravo ! Puzzle Terminé",
-          factTitle: "📜 Fait Lié à Cette Image :",
+          factTitle: "📜 Info sur Cette Image Précise :",
           continueBtn: "Continuer"
         },
         zh: {
@@ -691,20 +686,19 @@
           ach3: "🗝️ 秘密守护者",
           ach4: "👑 MEHA 传奇",
           settingsTitle: "⚙️ 设置",
-          volumeLabel: "🎵 音效与音乐音量：",
-          testMusicBtn: "🥁 吉萨鼓点",
-          testLuxorBtn: "🥁 卢克索鼓点",
-          stopMusicBtn: "⏹️ 停止",
+          volumeLabel: "🎵 全局游戏音乐音量：",
+          playMusicBtn: "▶️ 播放全局音乐",
+          stopMusicBtn: "⏹️ 停止音乐",
           langLabel: "🌐 语言：",
           saveCloseBtn: "保存并关闭",
           winTitle: "🎉 太棒了！拼图完成",
-          factTitle: "📜 与此图相关的历史知识：",
+          factTitle: "📜 关于此特定图片的知识：",
           continueBtn: "继续"
         }
       }
     };
 
-    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V2";
+    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V3";
 
     const state = {
       lang: "ar",
@@ -741,7 +735,7 @@
 
     const todayStr = () => new Date().toISOString().split("T")[0];
 
-    // محرك الصوت: يدعم ملفات MP3 حقيقية أو إيقاع طبول ودربكة مدمج
+    // محرك الصوت بموسيقى عامة واحدة مستمرة على كامل اللعبة
     const SoundEngine = {
       ctx: null,
       volume: 0.8,
@@ -749,6 +743,7 @@
       musicTimer: null,
       beatCount: 0,
       audioEl: null,
+      isPlayingGlobal: false,
 
       init() {
         if (!this.ctx) {
@@ -794,7 +789,6 @@
         osc.stop(now + duration + 0.03);
       },
 
-      // ضربة طبلة/دربكة إيقاعية
       _playDrum(startFreq = 150, duration = 0.2, gainPeak = 0.5, delay = 0) {
         this._playTone(startFreq, duration, "sine", delay, gainPeak, 45);
       },
@@ -809,10 +803,8 @@
       },
 
       playWinFanfare() {
-        this._playDrum(160, 0.28, 0.55, 0);
-        this._playDrum(160, 0.34, 0.6, 0.28);
-        this._playTone(587.33, 0.25, "triangle", 0.08, 0.28);
-        this._playTone(880.0, 0.32, "triangle", 0.24, 0.3);
+        this._playDrum(160, 0.24, 0.5, 0);
+        this._playTone(659.25, 0.22, "triangle", 0.05, 0.25);
       },
 
       playGameOver() {
@@ -820,44 +812,40 @@
         this._playTone(293.66, 0.3, "triangle", 0.12, 0.2);
       },
 
-      playLevelMusic(levelId = "giza") {
-        this.stopMusic();
+      // تشغيل موسيقى واحدة عامة للعبة كلها ولا تتغير بتغيير المرحلة
+      startGlobalMusic() {
         this.init();
+        if (this.isPlayingGlobal) return;
+        this.isPlayingGlobal = true;
 
-        const lvlObj = CONFIG.LEVELS.find(l => l.id === levelId || l.musicTheme === levelId);
-        if (lvlObj && lvlObj.audioUrl) {
-          this.audioEl = new Audio(lvlObj.audioUrl);
+        if (CONFIG.GLOBAL_MUSIC_URL) {
+          this.audioEl = new Audio(CONFIG.GLOBAL_MUSIC_URL);
           this.audioEl.loop = true;
           this.audioEl.volume = this.muted ? 0 : this.volume;
           this.audioEl.play().catch(() => {});
           return;
         }
 
-        // إيقاع طبول ودربكة حماسية (مقسوم/طبول مع نبض سريع)
-        this.beatCount = 0;
-        const patterns = {
-          giza:  { interval: 220, sequence: ["dum", "tak", "tak", "dum", "tak", "dum", "tak", "tak"] },
-          luxor: { interval: 190, sequence: ["dum", "tak", "dum", "tak", "tak", "dum", "tak", "dum"] }
-        };
-        const pat = patterns[levelId] || patterns.giza;
-
+        const globalPattern = ["dum", "tak", "tak", "dum", "tak", "dum", "tak", "tak"];
         const beatLoop = () => {
+          if (!this.isPlayingGlobal) return;
           if (!this.muted && this.volume > 0) {
-            const hit = pat.sequence[this.beatCount % pat.sequence.length];
+            const hit = globalPattern[this.beatCount % globalPattern.length];
             if (hit === "dum") {
-              this._playDrum(160, 0.2, 0.55, 0);
+              this._playDrum(155, 0.19, 0.48, 0);
             } else {
-              this._playDrum(240, 0.09, 0.28, 0);
+              this._playDrum(235, 0.08, 0.24, 0);
             }
             this.beatCount++;
           }
-          this.musicTimer = setTimeout(beatLoop, pat.interval);
+          this.musicTimer = setTimeout(beatLoop, 220);
         };
 
         beatLoop();
       },
 
       stopMusic() {
+        this.isPlayingGlobal = false;
         if (this.musicTimer) {
           clearTimeout(this.musicTimer);
           this.musicTimer = null;
@@ -870,7 +858,11 @@
       }
     };
 
-    document.addEventListener("pointerdown", () => SoundEngine.init(), { once: false });
+    // بدء الموسيقى العامة تلقائياً مع أول نقرة/لمسة داخل اللعبة
+    document.addEventListener("pointerdown", () => {
+      SoundEngine.init();
+      SoundEngine.startGlobalMusic();
+    }, { once: true });
 
     if (window.Pi) {
       window.Pi.init({ version: "2.0", sandbox: true });
@@ -926,7 +918,7 @@
     }
 
     function setupPuzzle() {
-      SoundEngine.stopMusic();
+      SoundEngine.startGlobalMusic();
       document.getElementById("screen-home").classList.remove("active");
       document.getElementById("screen-game").classList.add("active");
       document.getElementById("game-level-title").textContent = getLocalized(currentGame.lvl.title);
@@ -1159,7 +1151,7 @@
         saveProgress();
         updateUI();
         SoundEngine.playWinFanfare();
-        SoundEngine.playLevelMusic(lvl.musicTheme || lvl.id);
+        document.getElementById("win-scene-img").src = lvl.img;
         document.getElementById("win-scene-title").textContent = getLocalized(lvl.title);
         document.getElementById("win-rewards").textContent = msg;
         document.getElementById("win-fact").textContent = getLocalized(lvl.fact);
@@ -1287,12 +1279,10 @@
     function closeModal(id) { document.getElementById(id).classList.remove("open"); }
     function exitToHome() {
       clearInterval(timerId);
-      SoundEngine.stopMusic();
       document.getElementById("screen-game").classList.remove("active");
       document.getElementById("screen-home").classList.add("active");
     }
     function closeWin() {
-      SoundEngine.stopMusic();
       closeModal("modal-win");
       exitToHome();
     }
