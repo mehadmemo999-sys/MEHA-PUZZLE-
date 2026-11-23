@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEHA PUZZLE - أسرار الفراعنة</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    :root {
+      --royal-blue: #0d2149;
+      --deep-temple: #07122b;
+      --ancient-gold: #d4af37;
+      --bright-gold: #ffd700;
+      --turquoise: #1abc9c;
+      --papyrus-beige: #f4e4bc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: radial-gradient(circle at top, var(--royal-blue), var(--deep-temple));
+      color: var(--papyrus-beige);
+      min-height: 100vh;
+    }
+
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0d2149 0%, #1b3b6f 50%, #d4af37 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+
+    .puzzle-loader {
+      display: grid;
+      grid-template-columns: repeat(2, 48px);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .puzzle-loader span {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      animation: pulsePiece 1.2s infinite ease-in-out;
+    }
+    .puzzle-loader span:nth-child(1) { background: var(--bright-gold); animation-delay: 0s; }
+    .puzzle-loader span:nth-child(2) { background: var(--turquoise); animation-delay: 0.2s; }
+    .puzzle-loader span:nth-child(3) { background: #e67e22; animation-delay: 0.4s; }
+    .puzzle-loader span:nth-child(4) { background: var(--papyrus-beige); animation-delay: 0.6s; }
+
+    @keyframes pulsePiece {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.15) rotate(8deg); }
+    }
+
+    .stone-btn {
+      background: linear-gradient(180deg, #3d3122, #231b12);
+      border: 2px solid var(--ancient-gold);
+      color: var(--bright-gold);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(212, 175, 55, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .stone-btn:hover { transform: translateY(-2px); }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(7, 18, 43, 0.92);
+      border-bottom: 3px solid var(--ancient-gold);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge-box {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--ancient-gold);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .temple-backdrop {
+      background:
+        linear-gradient(to bottom, rgba(13, 33, 73, 0.68), rgba(7, 18, 43, 0.92)),
+        url('https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      min-height: calc(100vh - 65px);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .temple-backdrop { grid-template-columns: 1fr; }
+    }
+
+    .side-panel, .center-sanctuary {
+      background: rgba(13, 33, 73, 0.85);
+      border: 2px solid var(--ancient-gold);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .center-sanctuary {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    #puzzle-workspace {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    #puzzle-canvas {
+      background: var(--papyrus-beige);
+      border: 4px solid var(--ancient-gold);
+      border-radius: 12px;
+      touch-action: none;
+      max-width: 100%;
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      z-index: 5000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-card {
+      background: var(--royal-blue);
+      border: 3px solid var(--ancient-gold);
+      border-radius: 18px;
+      padding: 20px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .item-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--turquoise);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="splash-screen">
+    <div class="puzzle-loader">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <h1 style="color:#ffd700; font-size:2rem;">MEHA PUZZLE</h1>
+    <p>جاري فتح أبواب المعبد الفرعوني...</p>
+  </div>
+
+  <header class="top-bar">
+    <div class="badge-box">
+      👑 <span id="ui-username">مستكشف</span> | <span id="ui-rank">🏺 المستكشف المبتدئ</span>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
+      <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
+      <button class="stone-btn" onclick="openModal('modal-settings')">⚙️ الإعدادات</button>
+    </div>
+  </header>
+
+  <main id="screen-home" class="screen active">
+    <div class="temple-backdrop">
+      <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
+        <h3>🏛️ الملف الشخصي</h3>
+        <button class="stone-btn" onclick="openModal('modal-museum')">🏺 المتحف</button>
+        <button class="stone-btn" onclick="openModal('modal-achievements')">🏅 الإنجازات</button>
+        <div class="item-card">
+          <small>نقاط الخبرة XP</small>
+          <div id="ui-xp" style="font-weight:bold; color:#ffd700;">0 XP</div>
+        </div>
+      </aside>
+
+      <section class="center-sanctuary">
+        <h2 style="font-size:1.8rem; color:#ffd700;">المعابد والأهرامات ونهر النيل</h2>
+        <p>اختر مستوى اللعب أو افتح اللغز اليومي لاكتشاف الكنز المفقود</p>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <button class="stone-btn" onclick="startRandomLevel('easy')">🟢 سهل (2:00 د - 20 🪙)</button>
+          <button class="stone-btn" onclick="startRandomLevel('medium')">🟡 متوسط (3:30 د - 30 🪙)</button>
+          <button class="stone-btn" onclick="startRandomLevel('hard')">🔴 صعب (5:00 د - 50 🪙 + أثر)</button>
+        </div>
+
+        <button class="stone-btn" style="background:linear-gradient(180deg,#0f6b58,#083d32);" onclick="startDailyPuzzle()">
+          🗺️ اللغز اليومي: الكنز المفقود (مرة يومياً)
+        </button>
+      </section>
+
+      <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
+        <h3>🎡 عجلة الحظ والمتجر</h3>
+        <button class="stone-btn" onclick="spinLuckyWheel()">🎡 عجلة الحظ (مرة/يوم)</button>
+        <button class="stone-btn" onclick="openModal('modal-store')">🛒 المتجر</button>
+      </aside>
+    </div>
+  </main>
+
+  <section id="screen-game" class="screen">
+    <div id="puzzle-workspace">
+      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center;">
+        <button class="stone-btn" onclick="exitToHome()">🔙 خروج</button>
+        <h3 id="game-level-title">المرحلة</h3>
+        <div class="badge-box" style="color:#ffd700;">⏳ <span id="game-timer">02:00</span></div>
+        <button class="stone-btn" onclick="zoomCanvas(0.1)">➕</button>
+        <button class="stone-btn" onclick="zoomCanvas(-0.1)">➖</button>
+      </div>
+
+      <canvas id="puzzle-canvas" width="700" height="420"></canvas>
+
+      <div class="controls-bar">
+        <button class="stone-btn" onclick="handleUseHint()">💡 Hint (<span id="ui-hints">3</span>)</button>
+        <button class="stone-btn" onclick="handleUseView()">👁️ View 7s (<span id="ui-views">3</span>)</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="modal-store" class="modal">
+    <div class="modal-card">
+      <h3>🛒 متجر MEHA</h3>
+      <div class="item-card" style="margin:12px 0;">
+        <h4>🎁 صندوق المكافأة اليومي المجاني</h4>
+        <p>عملات عشوائية (50 - 200) + Hint أو View</p>
+        <button class="stone-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()">افتح الصندوق مجاناً</button>
+      </div>
+      <div class="grid-cards">
+        <div class="item-card">
+          <h4>💡 Hint</h4>
+          <p>100 Coin (حد 3/يوم)</p>
+          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('hint', 100)">شراء</button>
+        </div>
+        <div class="item-card">
+          <h4>👁️ View</h4>
+          <p>200 Coin (حد 3/يوم)</p>
+          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('view', 200)">شراء</button>
+        </div>
+      </div>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-store')">إغلاق</button>
+    </div>
+  </div>
+
+  <div id="modal-museum" class="modal">
+    <div class="modal-card">
+      <h3>🏺 المتحف الشخصي</h3>
+      <div id="museum-grid" class="grid-cards"></div>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-museum')">إغلاق</button>
+    </div>
+  </div>
+
+  <div id="modal-achievements" class="modal">
+    <div class="modal-card">
+      <h3>🏅 الإنجازات والألقاب</h3>
+      <div class="grid-cards">
+        <div class="item-card">🏺 مستكشف الآثار</div>
+        <div class="item-card">🧩 خبير البازل</div>
+        <div class="item-card">🗝️ حارس الأسرار</div>
+        <div class="item-card">👑 أسطورة MEHA</div>
+      </div>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-achievements')">إغلاق</button>
+    </div>
+  </div>
+
+  <div id="modal-settings" class="modal">
+    <div class="modal-card">
+      <h3>⚙️ الإعدادات</h3>
+      <div style="margin:12px 0;">
+        <label>🎵 مستوى الصوت والموسيقى:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.6" style="width:100%;" />
+      </div>
+      <div style="margin:12px 0;">
+        <label>🌐 اللغة:</label>
+        <select class="stone-btn" style="width:100%;" onchange="changeLang(this.value)">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+      <button class="stone-btn" style="width:100%;" onclick="closeModal('modal-settings')">حفظ وإغلاق</button>
+    </div>
+  </div>
+
+  <div id="modal-win" class="modal">
+    <div class="modal-card" style="text-align:center;">
+      <h2 style="color:#ffd700;">🎉 أحسنت! تم إكمال البازل</h2>
+      <p id="win-rewards" style="margin:10px 0; font-weight:bold;"></p>
+      <div class="item-card" style="text-align:right;">
+        <h4>📜 معلومة عن الصورة:</h4>
+        <p id="win-fact"></p>
+      </div>
+      <button class="stone-btn" style="margin-top:14px;" onclick="closeWin()">متابعة</button>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      MAX_LIVES: 10,
+      LIFE_REGEN_SEC: 240,
+      DIFFS: {
+        easy:   { rows: 3, cols: 3, timeSec: 120, coins: 20, xp: 30, rotate: false, artifact: false },
+        medium: { rows: 4, cols: 4, timeSec: 210, coins: 30, xp: 60, rotate: false, artifact: false },
+        hard:   { rows: 5, cols: 5, timeSec: 300, coins: 50, xp: 120, rotate: true, artifact: true }
+      },
+      RANKS: [
+        { minXp: 0, label: "🏺 المستكشف المبتدئ" },
+        { minXp: 250, label: "🧭 باحث الآثار" },
+        { minXp: 600, label: "📜 عالم المصريات" },
+        { minXp: 1200, label: "👁️ حارس الأسرار" },
+        { minXp: 2500, label: "👑 أسطورة الفراعنة" }
+      ],
+      LEVELS: [
+        {
+          id: "giza",
+          title: "أهرامات الجيزة وأبو الهول",
+          img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=800&q=80",
+          fact: "الأهرامات الثلاثة في الجيزة من أعظم الإنجازات المعمارية في مصر القديمة."
+        },
+        {
+          id: "luxor",
+          title: "معبد الكرنك ونهر النيل",
+          img: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=800&q=80",
+          fact: "كان نهر النيل محور الحياة والزراعة والحضارة المصرية القديمة."
+        }
+      ],
+      ARTIFACTS: [
+        { icon: "🎭", name: "قناع ذهبي ملكي" },
+        { icon: "🪲", name: "جعران المعبد" },
+        { icon: "☥", name: "رمز العنخ المقدس" }
+      ]
+    };
+
+    const state = {
+      coins: 150,
+      xp: 0,
+      hints: 3,
+      views: 3,
+      lives: 10,
+      lastLifeTime: Date.now(),
+      claimedLevels: [],
+      artifacts: [],
+      wheelDate: null,
+      boxDate: null,
+      dailyPuzzleDate: null,
+      hintBuys: { date: "", count: 0 },
+      viewBuys: { date: "", count: 0 }
+    };
+
+    const todayStr = () => new Date().toISOString().split("T")[0];
+
+    // تهيئة Pi SDK
+    if (window.Pi) {
+      window.Pi.init({ version: "2.0", sandbox: true });
+      window.Pi.authenticate(["username", "payments"], () => {})
+        .then(auth => {
+          if (auth && auth.user) {
+            document.getElementById("ui-username").textContent = auth.user.username;
+          }
+        })
+        .catch(() => {});
+    }
+
+    // إخفاء شاشة التحميل
+    window.addEventListener("DOMContentLoaded", () => {
+      updateUI();
+      setTimeout(() => {
+        const sp = document.getElementById("splash-screen");
+        sp.style.opacity = "0";
+        setTimeout(() => sp.style.display = "none", 600);
+      }, 1500);
+    });
+
+    // محرك البازل المتداخل
+    const canvas = document.getElementById("puzzle-canvas");
+    const ctx = canvas.getContext("2d");
+    let pieces = [], selected = null, dragOff = { x: 0, y: 0 }, zoom = 1, showPreview = false;
+    const imgObj = new Image();
+    imgObj.crossOrigin = "anonymous";
+
+    let timerId = null, timeLeft = 0, currentGame = null;
+
+    function startRandomLevel(diffKey) {
+      regenLives();
+      if (state.lives <= 0) return alert("نفدت محاولاتك (10/10)! تُجدد محاولة كل 4 دقائق.");
+      const lvl = CONFIG.LEVELS[Math.floor(Math.random() * CONFIG.LEVELS.length)];
+      currentGame = { lvl, diffKey, diff: CONFIG.DIFFS[diffKey], isDaily: false };
+      setupPuzzle();
+    }
+
+    function startDailyPuzzle() {
+      if (state.dailyPuzzleDate === todayStr()) {
+        return alert("لقد فتحت لغز الكنز المفقود اليوم! عد غداً.");
+      }
+      currentGame = { lvl: CONFIG.LEVELS[0], diffKey: "medium", diff: CONFIG.DIFFS.medium, isDaily: true };
+      setupPuzzle();
+    }
+
+    function setupPuzzle() {
+      document.getElementById("screen-home").classList.remove("active");
+      document.getElementById("screen-game").classList.add("active");
+      document.getElementById("game-level-title").textContent = currentGame.lvl.title;
+      zoom = 1;
+      showPreview = false;
+
+      const { rows, cols, rotate, timeSec } = currentGame.diff;
+      imgObj.onload = () => {
+        const bx = 35, by = 30, bw = 360, bh = 360;
+        const pw = bw / cols, ph = bh / rows;
+        const hEdges = Array.from({ length: rows + 1 }, () => Array(cols).fill(0));
+        const vEdges = Array.from({ length: rows }, () => Array(cols + 1).fill(0));
+
+        for (let r = 1; r < rows; r++) for (let c = 0; c < cols; c++) hEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
+        for (let r = 0; r < rows; r++) for (let c = 1; c < cols; c++) vEdges[r][c] = Math.random() > 0.5 ? 1 : -1;
+
+        pieces = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            pieces.push({
+              r, c, pw, ph,
+              correctX: bx + c * pw,
+              correctY: by + r * ph,
+              x: 425 + Math.random() * 170,
+              y: 35 + Math.random() * 310,
+              rot: rotate ? [0, 90, 180, 270][Math.floor(Math.random() * 4)] : 0,
+              locked: false,
+              edges: { top: -hEdges[r][c], bottom: hEdges[r + 1][c], left: -vEdges[r][c], right: vEdges[r][c + 1] }
+            });
+          }
+        }
+        drawBoard();
+      };
+      imgObj.src = currentGame.lvl.img;
+
+      clearInterval(timerId);
+      timeLeft = timeSec;
+      renderTime();
+      timerId = setInterval(() => {
+        timeLeft--;
+        renderTime();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          state.lives = Math.max(0, state.lives - 1);
+          updateUI();
+          alert("Game Over! انتهى الوقت، ستبدأ من جديد في نفس المستوى ونفس الصورة.");
+          setupPuzzle();
+        }
+      }, 1000);
+    }
+
+    function renderTime() {
+      const m = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+      const s = String(timeLeft % 60).padStart(2, "0");
+      document.getElementById("game-timer").textContent = `${m}:${s}`;
+    }
+
+    function drawPath(p) {
+      const { pw: w, ph: h, edges } = p;
+      const tab = Math.min(w, h) * 0.22;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      if (!edges.top) ctx.lineTo(w, 0);
+      else { ctx.lineTo(w * 0.35, 0); ctx.bezierCurveTo(w * 0.35, -tab * edges.top, w * 0.65, -tab * edges.top, w * 0.65, 0); ctx.lineTo(w, 0); }
+      if (!edges.right) ctx.lineTo(w, h);
+      else { ctx.lineTo(w, h * 0.35); ctx.bezierCurveTo(w + tab * edges.right, h * 0.35, w + tab * edges.right, h * 0.65, w, h * 0.65); ctx.lineTo(w, h); }
+      if (!edges.bottom) ctx.lineTo(0, h);
+      else { ctx.lineTo(w * 0.65, h); ctx.bezierCurveTo(w * 0.65, h + tab * edges.bottom, w * 0.35, h + tab * edges.bottom, w * 0.35, h); ctx.lineTo(0, h); }
+      if (!edges.left) ctx.closePath();
+      else { ctx.lineTo(0, h * 0.65); ctx.bezierCurveTo(-tab * edges.left, h * 0.65, -tab * edges.left, h * 0.35, 0, h * 0.35); ctx.closePath(); }
+    }
+
+    function drawBoard() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(zoom, zoom);
+      ctx.strokeStyle = "#d4af37";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(35, 30, 360, 360);
+      ctx.fillStyle = "rgba(13, 33, 73, 0.1)";
+      ctx.fillRect(415, 20, 265, 380);
+
+      if (showPreview) {
+        ctx.globalAlpha = 0.85;
+        ctx.drawImage(imgObj, 35, 30, 360, 360);
+        ctx.globalAlpha = 1;
+      }
+
+      for (const p of pieces) {
+        ctx.save();
+        ctx.translate(p.x + p.pw / 2, p.y + p.ph / 2);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.translate(-p.pw / 2, -p.ph / 2);
+        drawPath(p);
+        ctx.save();
+        ctx.clip();
+        const sx = imgObj.width / 360, sy = imgObj.height / 360, pad = Math.max(p.pw, p.ph) * 0.3;
+        ctx.drawImage(imgObj, (p.c * p.pw - pad) * sx, (p.r * p.ph - pad) * sy, (p.pw + pad * 2) * sx, (p.ph + pad * 2) * sy, -pad, -pad, p.pw + pad * 2, p.ph + pad * 2);
+        ctx.restore();
+        ctx.strokeStyle = p.locked ? "#1abc9c" : "#0d2149";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: ((cx - rect.left) * (canvas.width / rect.width)) / zoom, y: ((cy - rect.top) * (canvas.height / rect.height)) / zoom };
+    }
+
+    function onDown(e) {
+      const pos = getPos(e);
+      for (let i = pieces.length - 1; i >= 0; i--) {
+        const p = pieces[i];
+        if (!p.locked && pos.x >= p.x && pos.x <= p.x + p.pw && pos.y >= p.y && pos.y <= p.y + p.ph) {
+          selected = p;
+          dragOff = { x: pos.x - p.x, y: pos.y - p.y };
+          pieces.splice(i, 1);
+          pieces.push(p);
+          break;
+        }
+      }
+    }
+
+    function onMove(e) {
+      if (!selected) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      selected.x = pos.x - dragOff.x;
+      selected.y = pos.y - dragOff.y;
+      drawBoard();
+    }
+
+    function onUp() {
+      if (!selected) return;
+      if (Math.hypot(selected.x - selected.correctX, selected.y - selected.correctY) < 25 && selected.rot % 360 === 0) {
+        selected.x = selected.correctX;
+        selected.y = selected.correctY;
+        selected.locked = true;
+      }
+      selected = null;
+      drawBoard();
+      checkWin();
+    }
+
+    canvas.addEventListener("dblclick", (e) => {
+      if (!currentGame || !currentGame.diff.rotate) return;
+      const pos = getPos(e);
+      const p = [...pieces].reverse().find(it => !it.locked && pos.x >= it.x && pos.x <= it.x + it.pw && pos.y >= it.y && pos.y <= it.y + it.ph);
+      if (p) { p.rot = (p.rot + 90) % 360; drawBoard(); }
+    });
+
+    canvas.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    canvas.addEventListener("touchstart", onDown, { passive: false });
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+
+    function zoomCanvas(d) { zoom = Math.min(1.3, Math.max(0.75, zoom + d)); drawBoard(); }
+
+    function handleUseHint() {
+      if (state.hints > 0) {
+        const p = pieces.find(it => !it.locked);
+        if (p) {
+          p.x = p.correctX; p.y = p.correctY; p.rot = 0; p.locked = true;
+          state.hints--;
+          updateUI(); drawBoard(); checkWin();
+        }
+      } else if (confirm("نفدت Hint! هل تريد مشاهدة فيديو قصير (حتى 30 ثانية) للحصول على Hint؟")) {
+        state.hints++; updateUI();
+      }
+    }
+
+    function handleUseView() {
+      if (state.views > 0) {
+        state.views--;
+        updateUI();
+        showPreview = true; drawBoard();
+        setTimeout(() => { showPreview = false; drawBoard(); }, 7000);
+      } else if (confirm("نفدت View! هل تريد مشاهدة فيديو قصير (حتى 30 ثانية) للحصول على View؟")) {
+        state.views++; updateUI();
+      }
+    }
+
+    function checkWin() {
+      if (pieces.length && pieces.every(p => p.locked)) {
+        clearInterval(timerId);
+        const { lvl, diffKey, diff, isDaily } = currentGame;
+        const key = `${lvl.id}_${diffKey}`;
+        let msg = "";
+
+        if (isDaily) {
+          state.dailyPuzzleDate = todayStr();
+          state.coins += 60; state.xp += 100;
+          msg = "+60 Coin و +100 XP واكتشاف قطعة من الكنز المفقود!";
+        } else if (!state.claimedLevels.includes(key)) {
+          state.claimedLevels.push(key);
+          state.coins += diff.coins; state.xp += diff.xp;
+          msg = `+${diff.coins} Coin و +${diff.xp} XP`;
+          if (diff.artifact) {
+            const art = CONFIG.ARTIFACTS[Math.floor(Math.random() * CONFIG.ARTIFACTS.length)];
+            if (!state.artifacts.some(a => a.name === art.name)) {
+              state.artifacts.push(art);
+              msg += ` + مقتنى نادر للمتحف: ${art.name}`;
+            }
+          }
+        } else {
+          msg = "إعادة مرحلة ناجحة (تم أخذ مكافأة الإكمال الأول سابقاً).";
+        }
+
+        updateUI();
+        document.getElementById("win-rewards").textContent = msg;
+        document.getElementById("win-fact").textContent = lvl.fact;
+        openModal("modal-win");
+      }
+    }
+
+    function spinLuckyWheel() {
+      if (state.wheelDate === todayStr()) return alert("لقد استخدمت عجلة الحظ اليوم!");
+      state.wheelDate = todayStr();
+      const pool = ["coins", "hint", "view"];
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      if (pick === "coins") { const c = [25, 50, 100][Math.floor(Math.random() * 3)]; state.coins += c; alert(`🎡 ربحت ${c} Coin!`); }
+      if (pick === "hint") { state.hints++; alert("🎡 ربحت 1 Hint!"); }
+      if (pick === "view") { state.views++; alert("🎡 ربحت 1 View!"); }
+      updateUI();
+    }
+
+    function claimDailyStoreBox() {
+      if (state.boxDate === todayStr()) return alert("تم فتح صندوق المتجر اليومي اليوم بالفعل!");
+      state.boxDate = todayStr();
+      const c = [50, 70, 100, 150, 200][Math.floor(Math.random() * 5)];
+      const bonus = Math.random() > 0.5 ? "hint" : "view";
+      state.coins += c;
+      if (bonus === "hint") state.hints++; else state.views++;
+      updateUI();
+      alert(`🎁 حصلت على ${c} Coin + 1 ${bonus.toUpperCase()}!`);
+    }
+
+    function buyStoreItem(type, price) {
+      if (state.coins < price) return alert("رصيدك من العملات غير كافٍ!");
+      const t = todayStr();
+      if (type === "hint") {
+        if (state.hintBuys.date !== t) state.hintBuys = { date: t, count: 0 };
+        if (state.hintBuys.count >= 3) return alert("الحد الأقصى لشراء Hint هو 3 مرات يومياً.");
+        state.coins -= price; state.hints++; state.hintBuys.count++;
+      } else {
+        if (state.viewBuys.date !== t) state.viewBuys = { date: t, count: 0 };
+        if (state.viewBuys.count >= 3) return alert("الحد الأقصى لشراء View هو 3 مرات يومياً.");
+        state.coins -= price; state.views++; state.viewBuys.count++;
+      }
+      updateUI();
+      alert("تم الشراء بنجاح!");
+    }
+
+    function regenLives() {
+      if (state.lives >= CONFIG.MAX_LIVES) { state.lastLifeTime = Date.now(); return; }
+      const gained = Math.floor((Date.now() - state.lastLifeTime) / 1000 / CONFIG.LIFE_REGEN_SEC);
+      if (gained > 0) {
+        state.lives = Math.min(CONFIG.MAX_LIVES, state.lives + gained);
+        state.lastLifeTime = Date.now();
+      }
+    }
+
+    function updateUI() {
+      document.getElementById("ui-coins").textContent = state.coins;
+      document.getElementById("ui-lives").textContent = state.lives;
+      document.getElementById("ui-xp").textContent = `${state.xp} XP`;
+      document.getElementById("ui-hints").textContent = state.hints;
+      document.getElementById("ui-views").textContent = state.views;
+      const rank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp);
+      document.getElementById("ui-rank").textContent = rank.label;
+      document.getElementById("museum-grid").innerHTML = state.artifacts.length
+        ? state.artifacts.map(a => `<div class="item-card"><div style="font-size:1.8rem;">${a.icon}</div><div>${a.name}</div></div>`).join("")
+        : "<p>اجمع مقتنيات نادرة من المراحل الصعبة.</p>";
+    }
+
+    function changeLang(l) {
+      document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = l;
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add("open"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+    function exitToHome() { clearInterval(timerId); document.getElementById("screen-game").classList.remove("active"); document.getElementById("screen-home").classList.add("active"); }
+    function closeWin() { closeModal("modal-win"); exitToHome(); }
+  </script>
+</body>
+</html>
