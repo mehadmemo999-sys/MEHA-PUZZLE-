@@ -211,7 +211,7 @@
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
       <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
       <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
-      <button class="stone-btn" onclick="openModal('modal-settings')">⚙️ الإعدادات</button>
+      <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')">⚙️ الإعدادات</button>
     </div>
   </header>
 
@@ -219,8 +219,8 @@
     <div class="temple-backdrop">
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
         <h3>🏛️ الملف الشخصي</h3>
-        <button class="stone-btn" onclick="openModal('modal-museum')">🏺 المتحف</button>
-        <button class="stone-btn" onclick="openModal('modal-achievements')">🏅 الإنجازات</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-museum')">🏺 المتحف</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-achievements')">🏅 الإنجازات</button>
         <div class="item-card">
           <small>نقاط الخبرة XP</small>
           <div id="ui-xp" style="font-weight:bold; color:#ffd700;">0 XP</div>
@@ -232,20 +232,20 @@
         <p>اختر مستوى اللعب أو افتح اللغز اليومي لاكتشاف الكنز المفقود</p>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-          <button class="stone-btn" onclick="startRandomLevel('easy')">🟢 سهل (2:00 د - 20 🪙)</button>
-          <button class="stone-btn" onclick="startRandomLevel('medium')">🟡 متوسط (3:30 د - 30 🪙)</button>
-          <button class="stone-btn" onclick="startRandomLevel('hard')">🔴 صعب (5:00 د - 50 🪙 + أثر)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('easy')">🟢 سهل (2:00 د - 20 🪙)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('medium')">🟡 متوسط (3:30 د - 30 🪙)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('hard')">🔴 صعب (5:00 د - 50 🪙 + أثر)</button>
         </div>
 
-        <button class="stone-btn" style="background:linear-gradient(180deg,#0f6b58,#083d32);" onclick="startDailyPuzzle()">
+        <button class="stone-btn" style="background:linear-gradient(180deg,#0f6b58,#083d32);" onclick="SoundEngine.playClick(); startDailyPuzzle()">
           🗺️ اللغز اليومي: الكنز المفقود (مرة يومياً)
         </button>
       </section>
 
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
         <h3>🎡 عجلة الحظ والمتجر</h3>
-        <button class="stone-btn" onclick="spinLuckyWheel()">🎡 عجلة الحظ (مرة/يوم)</button>
-        <button class="stone-btn" onclick="openModal('modal-store')">🛒 المتجر</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); spinLuckyWheel()">🎡 عجلة الحظ (مرة/يوم)</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-store')">🛒 المتجر</button>
       </aside>
     </div>
   </main>
@@ -253,11 +253,11 @@
   <section id="screen-game" class="screen">
     <div id="puzzle-workspace">
       <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center;">
-        <button class="stone-btn" onclick="exitToHome()">🔙 خروج</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); exitToHome()">🔙 خروج</button>
         <h3 id="game-level-title">المرحلة</h3>
         <div class="badge-box" style="color:#ffd700;">⏳ <span id="game-timer">02:00</span></div>
-        <button class="stone-btn" onclick="zoomCanvas(0.1)">➕</button>
-        <button class="stone-btn" onclick="zoomCanvas(-0.1)">➖</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); zoomCanvas(0.1)">➕</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); zoomCanvas(-0.1)">➖</button>
       </div>
 
       <canvas id="puzzle-canvas" width="700" height="420"></canvas>
@@ -289,7 +289,7 @@
           <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('view', 200)">شراء</button>
         </div>
       </div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-store')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-store')">إغلاق</button>
     </div>
   </div>
 
@@ -297,7 +297,7 @@
     <div class="modal-card">
       <h3>🏺 المتحف الشخصي</h3>
       <div id="museum-grid" class="grid-cards"></div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-museum')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-museum')">إغلاق</button>
     </div>
   </div>
 
@@ -310,7 +310,7 @@
         <div class="item-card">🗝️ حارس الأسرار</div>
         <div class="item-card">👑 أسطورة MEHA</div>
       </div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="closeModal('modal-achievements')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-achievements')">إغلاق</button>
     </div>
   </div>
 
@@ -319,7 +319,7 @@
       <h3>⚙️ الإعدادات</h3>
       <div style="margin:12px 0;">
         <label>🎵 مستوى الصوت والموسيقى:</label>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.6" style="width:100%;" />
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.6" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
       </div>
       <div style="margin:12px 0;">
         <label>🌐 اللغة:</label>
@@ -330,7 +330,7 @@
           <option value="zh">中文</option>
         </select>
       </div>
-      <button class="stone-btn" style="width:100%;" onclick="closeModal('modal-settings')">حفظ وإغلاق</button>
+      <button class="stone-btn" style="width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-settings')">حفظ وإغلاق</button>
     </div>
   </div>
 
@@ -401,6 +401,103 @@
 
     const todayStr = () => new Date().toISOString().split("T")[0];
 
+    // نظام الصوت والموسيقى الفرعونية
+    const SoundEngine = {
+      ctx: null,
+      volume: 0.6,
+      muted: false,
+      musicTimer: null,
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+      },
+
+      setVolume(val) {
+        this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
+        this.muted = this.volume === 0;
+      },
+
+      _playTone(freq, duration = 0.25, type = "sine", delay = 0, gainPeak = 0.18) {
+        this.init();
+        if (!this.ctx || this.muted || this.volume <= 0) return;
+
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        const finalGain = gainPeak * this.volume;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(finalGain, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration + 0.02);
+      },
+
+      playSnap() {
+        this._playTone(523.25, 0.12, "triangle", 0, 0.22);
+        this._playTone(783.99, 0.16, "sine", 0.06, 0.18);
+      },
+
+      playClick() {
+        this._playTone(440, 0.08, "sine", 0, 0.12);
+      },
+
+      playWinFanfare() {
+        const notes = [392.0, 493.88, 587.33, 783.99];
+        notes.forEach((n, idx) => {
+          this._playTone(n, 0.28, "triangle", idx * 0.12, 0.22);
+        });
+      },
+
+      playGameOver() {
+        const notes = [349.23, 311.13, 261.63];
+        notes.forEach((n, idx) => {
+          this._playTone(n, 0.35, "sawtooth", idx * 0.18, 0.14);
+        });
+      },
+
+      playLevelMusic(levelId = "giza") {
+        this.stopMusic();
+        const themes = {
+          giza:  [293.66, 349.23, 440.0, 466.16, 587.33, 440.0],
+          luxor: [329.63, 392.0, 493.88, 523.25, 659.25, 523.25]
+        };
+        const scale = themes[levelId] || themes.giza;
+        let step = 0;
+
+        const playStep = () => {
+          if (!this.muted && this.volume > 0) {
+            const freq = scale[step % scale.length];
+            this._playTone(freq, 0.45, "sine", 0, 0.14);
+            step++;
+          }
+          this.musicTimer = setTimeout(playStep, 480);
+        };
+
+        playStep();
+      },
+
+      stopMusic() {
+        if (this.musicTimer) {
+          clearTimeout(this.musicTimer);
+          this.musicTimer = null;
+        }
+      }
+    };
+
     // تهيئة Pi SDK
     if (window.Pi) {
       window.Pi.init({ version: "2.0", sandbox: true });
@@ -449,6 +546,7 @@
     }
 
     function setupPuzzle() {
+      SoundEngine.stopMusic();
       document.getElementById("screen-home").classList.remove("active");
       document.getElementById("screen-game").classList.add("active");
       document.getElementById("game-level-title").textContent = currentGame.lvl.title;
@@ -492,6 +590,7 @@
         renderTime();
         if (timeLeft <= 0) {
           clearInterval(timerId);
+          SoundEngine.playGameOver();
           state.lives = Math.max(0, state.lives - 1);
           updateUI();
           alert("Game Over! انتهى الوقت، ستبدأ من جديد في نفس المستوى ونفس الصورة.");
@@ -592,6 +691,7 @@
         selected.x = selected.correctX;
         selected.y = selected.correctY;
         selected.locked = true;
+        SoundEngine.playSnap();
       }
       selected = null;
       drawBoard();
@@ -602,7 +702,7 @@
       if (!currentGame || !currentGame.diff.rotate) return;
       const pos = getPos(e);
       const p = [...pieces].reverse().find(it => !it.locked && pos.x >= it.x && pos.x <= it.x + it.pw && pos.y >= it.y && pos.y <= it.y + it.ph);
-      if (p) { p.rot = (p.rot + 90) % 360; drawBoard(); }
+      if (p) { p.rot = (p.rot + 90) % 360; SoundEngine.playClick(); drawBoard(); }
     });
 
     canvas.addEventListener("mousedown", onDown);
@@ -620,6 +720,7 @@
         if (p) {
           p.x = p.correctX; p.y = p.correctY; p.rot = 0; p.locked = true;
           state.hints--;
+          SoundEngine.playSnap();
           updateUI(); drawBoard(); checkWin();
         }
       } else if (confirm("نفدت Hint! هل تريد مشاهدة فيديو قصير (حتى 30 ثانية) للحصول على Hint؟")) {
@@ -630,6 +731,7 @@
     function handleUseView() {
       if (state.views > 0) {
         state.views--;
+        SoundEngine.playClick();
         updateUI();
         showPreview = true; drawBoard();
         setTimeout(() => { showPreview = false; drawBoard(); }, 7000);
@@ -665,6 +767,8 @@
         }
 
         updateUI();
+        SoundEngine.playWinFanfare();
+        SoundEngine.playLevelMusic(lvl.id);
         document.getElementById("win-rewards").textContent = msg;
         document.getElementById("win-fact").textContent = lvl.fact;
         openModal("modal-win");
@@ -738,8 +842,17 @@
 
     function openModal(id) { document.getElementById(id).classList.add("open"); }
     function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-    function exitToHome() { clearInterval(timerId); document.getElementById("screen-game").classList.remove("active"); document.getElementById("screen-home").classList.add("active"); }
-    function closeWin() { closeModal("modal-win"); exitToHome(); }
+    function exitToHome() {
+      clearInterval(timerId);
+      SoundEngine.stopMusic();
+      document.getElementById("screen-game").classList.remove("active");
+      document.getElementById("screen-home").classList.add("active");
+    }
+    function closeWin() {
+      SoundEngine.stopMusic();
+      closeModal("modal-win");
+      exitToHome();
+    }
   </script>
 </body>
 </html>
