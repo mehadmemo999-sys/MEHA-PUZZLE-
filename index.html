@@ -271,6 +271,136 @@
       padding: 8px;
       font-size: 0.82rem;
     }
+
+    /* عجلة الحظ الدوارة */
+    .wheel-stage {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin: 14px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 13px solid transparent;
+      border-right: 13px solid transparent;
+      border-top: 24px solid var(--bright-gold);
+      z-index: 10;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+    }
+
+    .lucky-wheel {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 6px solid var(--bright-gold);
+      box-shadow: 0 0 22px rgba(255, 215, 0, 0.35), inset 0 0 16px rgba(0, 0, 0, 0.45);
+      background: conic-gradient(
+        #1abc9c 0deg 60deg,
+        #b8860b 60deg 120deg,
+        #16a085 120deg 180deg,
+        #d4af37 180deg 240deg,
+        #0e6251 240deg 300deg,
+        #f39c12 300deg 360deg
+      );
+      position: relative;
+      transition: transform 3.2s cubic-bezier(0.15, 0.85, 0.2, 1);
+    }
+
+    .wheel-center-cap {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #3d3122, #1a140d);
+      border: 3px solid var(--bright-gold);
+      color: var(--bright-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.95rem;
+      z-index: 5;
+    }
+
+    /* صندوق الكنز الفرعوني المزخرف */
+    .pharaoh-chest-box {
+      position: relative;
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.16), rgba(7, 18, 43, 0.92));
+      border: 2px solid var(--bright-gold);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 12px 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .chest-glyphs-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      font-size: 1.35rem;
+      color: var(--bright-gold);
+      margin-bottom: 6px;
+      letter-spacing: 3px;
+    }
+
+    .pharaoh-chest-visual {
+      width: 126px;
+      height: 86px;
+      margin: 8px auto;
+      border-radius: 12px 12px 18px 18px;
+      border: 3px solid var(--bright-gold);
+      background: linear-gradient(180deg, #4b381d 0%, #2d2010 55%, #1c1409 100%);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 0 12px rgba(255, 215, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.35s ease;
+    }
+
+    .pharaoh-chest-visual.opened {
+      transform: scale(1.06) translateY(-3px);
+      border-color: var(--turquoise);
+      box-shadow: 0 0 24px rgba(26, 188, 156, 0.55);
+    }
+
+    .chest-lock-emblem {
+      background: var(--bright-gold);
+      color: #07122b;
+      font-weight: bold;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .chest-reward-pop {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(26, 188, 156, 0.18);
+      border: 1px solid var(--turquoise);
+      color: #ffd700;
+      font-weight: bold;
+      display: none;
+      animation: popUpReward 0.35s ease;
+    }
+
+    @keyframes popUpReward {
+      from { opacity: 0; transform: translateY(10px) scale(0.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -325,8 +455,8 @@
 
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
         <h3 data-i18n="rewardsTitle">🎡 Lucky Wheel & Store</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); spinLuckyWheel()" data-i18n="wheelBtn">🎡 Lucky Wheel (Once/Day)</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-store')" data-i18n="storeBtn">🛒 Store</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openWheelModal()" data-i18n="wheelBtn">🎡 Lucky Wheel (Once/Day)</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openStoreModal()" data-i18n="storeBtn">🛒 Store</button>
       </aside>
     </div>
   </main>
@@ -351,14 +481,47 @@
     </div>
   </section>
 
+  <!-- نافذة عجلة الحظ الدوارة -->
+  <div id="modal-wheel" class="modal">
+    <div class="modal-card" style="text-align:center;">
+      <h3 data-i18n="wheelModalTitle">🎡 Pharaonic Lucky Wheel</h3>
+      <div class="wheel-stage">
+        <div class="wheel-pointer"></div>
+        <div id="lucky-wheel-disc" class="lucky-wheel"></div>
+        <div class="wheel-center-cap">MEHA</div>
+      </div>
+      <div id="wheel-result-text" style="min-height:28px; color:#1abc9c; font-weight:bold; margin-bottom:10px;"></div>
+      <button id="btn-spin-wheel" class="stone-btn" onclick="spinLuckyWheel()" data-i18n="spinNowBtn">🎡 Spin Now</button>
+      <button class="stone-btn" style="margin-top:12px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-wheel')" data-i18n="closeBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- نافذة المتجر مع صندوق الكنز الفرعوني -->
   <div id="modal-store" class="modal">
     <div class="modal-card">
       <h3 data-i18n="storeTitle">🛒 MEHA Store</h3>
-      <div class="item-card" style="margin:12px 0;">
-        <h4 data-i18n="dailyBoxTitle">🎁 Free Daily Reward Box</h4>
-        <p data-i18n="dailyBoxDesc">Random coins (50 - 200) + Hint or View</p>
-        <button class="stone-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()" data-i18n="openBoxBtn">Open Free Box</button>
+
+      <div class="pharaoh-chest-box">
+        <div class="chest-glyphs-row">
+          <span>𓂀</span>
+          <span>☥</span>
+          <span>👑</span>
+        </div>
+        <h4 data-i18n="dailyBoxTitle">🎁 Pharaonic Treasure Box</h4>
+        <p style="font-size:0.86rem;" data-i18n="dailyBoxDesc">Random coins (50 - 200) + Hint or View</p>
+
+        <div id="pharaoh-chest-visual" class="pharaoh-chest-visual">
+          <div style="font-size:1.4rem;">🏺✨</div>
+          <div class="chest-lock-emblem">☥</div>
+        </div>
+
+        <div id="chest-reward-pop" class="chest-reward-pop"></div>
+
+        <button id="btn-open-chest" class="stone-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()" data-i18n="openBoxBtn">
+          🔓 Unlock Pharaonic Treasure
+        </button>
       </div>
+
       <div class="grid-cards">
         <div class="item-card">
           <h4>💡 Hint</h4>
@@ -440,7 +603,7 @@
     <div class="modal-card">
       <h3 data-i18n="settingsTitle">⚙️ Settings</h3>
       <div style="margin:12px 0;">
-        <label data-i18n="volumeLabel">🪈 Steady Pharaonic Ney Music Volume:</label>
+        <label data-i18n="volumeLabel">🪈 Fast & Clear Pharaonic Ney Music Volume:</label>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
           <button class="stone-btn" onclick="SoundEngine.startGlobalMusic()" data-i18n="playMusicBtn">▶️ Play Ney Music</button>
@@ -627,7 +790,6 @@
         sCtx.fill();
         sCtx.stroke();
       } else {
-        // papyrus_scroll_scene
         sCtx.fillStyle = "#2b1f14";
         sCtx.fillRect(0, 0, 360, 360);
         sCtx.fillStyle = "#f4e4bc";
@@ -857,12 +1019,14 @@
           dailyBtn: "🗺️ Daily Puzzle: Lost Treasure (Once/Day)",
           rewardsTitle: "🎡 Lucky Wheel & Store",
           wheelBtn: "🎡 Lucky Wheel (Once/Day)",
+          wheelModalTitle: "🎡 Pharaonic Lucky Wheel",
+          spinNowBtn: "🎡 Spin Now",
           storeBtn: "🛒 Store",
           exitBtn: "🔙 Exit",
           storeTitle: "🛒 MEHA Store",
-          dailyBoxTitle: "🎁 Free Daily Reward Box",
+          dailyBoxTitle: "🎁 Pharaonic Treasure Box",
           dailyBoxDesc: "Random coins (50 - 200) + Hint or View",
-          openBoxBtn: "Open Free Box",
+          openBoxBtn: "🔓 Unlock Pharaonic Treasure",
           buyBtn: "Buy",
           closeBtn: "Close",
           museumTitle: "🏺 Personal Museum",
@@ -873,7 +1037,7 @@
           ranksLadderTitle: "👑 MEHA LEGEND Rank Progression",
           adminTitle: "🛡️ Admin Dashboard",
           settingsTitle: "⚙️ Settings",
-          volumeLabel: "🪈 Steady Pharaonic Ney Music Volume:",
+          volumeLabel: "🪈 Fast & Clear Pharaonic Ney Music Volume:",
           playMusicBtn: "▶️ Play Ney Music",
           stopMusicBtn: "⏹️ Stop Music",
           langLabel: "🌐 Language:",
@@ -897,12 +1061,14 @@
           dailyBtn: "🗺️ اللغز اليومي: الكنز المفقود (مرة يومياً)",
           rewardsTitle: "🎡 عجلة الحظ والمتجر",
           wheelBtn: "🎡 عجلة الحظ (مرة/يوم)",
+          wheelModalTitle: "🎡 عجلة الحظ الفرعونية",
+          spinNowBtn: "🎡 أدر العجلة الآن",
           storeBtn: "🛒 المتجر",
           exitBtn: "🔙 خروج",
           storeTitle: "🛒 متجر MEHA",
-          dailyBoxTitle: "🎁 صندوق المكافأة اليومي المجاني",
+          dailyBoxTitle: "🎁 صندوق الكنز الفرعوني",
           dailyBoxDesc: "عملات عشوائية (50 - 200) + Hint أو View",
-          openBoxBtn: "افتح الصندوق مجاناً",
+          openBoxBtn: "🔓 افتح صندوق الكنز",
           buyBtn: "شراء",
           closeBtn: "إغلاق",
           museumTitle: "🏺 المتحف الشخصي",
@@ -913,7 +1079,7 @@
           ranksLadderTitle: "👑 سلم رتب أسطورة MEHA",
           adminTitle: "🛡️ لوحة الإدارة",
           settingsTitle: "⚙️ الإعدادات",
-          volumeLabel: "🪈 مستوى موسيقى الناي الفرعوني الثابتة:",
+          volumeLabel: "🪈 مستوى موسيقى الناي الفرعوني السريعة والواضحة:",
           playMusicBtn: "▶️ تشغيل موسيقى الناي",
           stopMusicBtn: "⏹️ إيقاف الموسيقى",
           langLabel: "🌐 اللغة:",
@@ -937,12 +1103,14 @@
           dailyBtn: "🗺️ Énigme Quotidienne : Trésor Perdu",
           rewardsTitle: "🎡 Roue & Boutique",
           wheelBtn: "🎡 Roue de la Chance (1/jour)",
+          wheelModalTitle: "🎡 Roue de la Chance Pharaonique",
+          spinNowBtn: "🎡 Tourner Maintenant",
           storeBtn: "🛒 Boutique",
           exitBtn: "🔙 Quitter",
           storeTitle: "🛒 Boutique MEHA",
-          dailyBoxTitle: "🎁 Coffre Quotidien Gratuit",
+          dailyBoxTitle: "🎁 Coffre au Trésor Pharaonique",
           dailyBoxDesc: "Pièces aléatoires (50 - 200) + Hint ou View",
-          openBoxBtn: "Ouvrir Gratuitement",
+          openBoxBtn: "🔓 Ouvrir le Coffre",
           buyBtn: "Acheter",
           closeBtn: "Fermer",
           museumTitle: "🏺 Musée Personnel",
@@ -953,7 +1121,7 @@
           ranksLadderTitle: "👑 Progression des Rangs MEHA LEGEND",
           adminTitle: "🛡️ Tableau Admin",
           settingsTitle: "⚙️ Paramètres",
-          volumeLabel: "🪈 Volume Musique Nay Pharaonique Stable :",
+          volumeLabel: "🪈 Volume Musique Nay Rapide & Claire :",
           playMusicBtn: "▶️ Lancer Musique Nay",
           stopMusicBtn: "⏹️ Arrêter Musique",
           langLabel: "🌐 Langue :",
@@ -977,12 +1145,14 @@
           dailyBtn: "🗺️ 每日谜题：失落宝藏（每日一次）",
           rewardsTitle: "🎡 幸运转盘与商店",
           wheelBtn: "🎡 幸运转盘（每日一次）",
+          wheelModalTitle: "🎡 法老幸运转盘",
+          spinNowBtn: "🎡 立即转动",
           storeBtn: "🛒 商店",
           exitBtn: "🔙 退出",
           storeTitle: "🛒 MEHA 商店",
-          dailyBoxTitle: "🎁 每日免费奖励箱",
+          dailyBoxTitle: "🎁 法老百宝箱",
           dailyBoxDesc: "随机金币 (50 - 200) + Hint 或 View",
-          openBoxBtn: "免费打开",
+          openBoxBtn: "🔓 开启百宝箱",
           buyBtn: "购买",
           closeBtn: "关闭",
           museumTitle: "🏺 个人博物馆",
@@ -993,7 +1163,7 @@
           ranksLadderTitle: "👑 MEHA LEGEND 军衔进阶",
           adminTitle: "🛡️ 管理后台",
           settingsTitle: "⚙️ 设置",
-          volumeLabel: "🪈 稳定法老长笛音乐音量：",
+          volumeLabel: "🪈 清晰快速法老长笛音乐音量：",
           playMusicBtn: "▶️ 播放长笛音乐",
           stopMusicBtn: "⏹️ 停止音乐",
           langLabel: "🌐 语言：",
@@ -1005,7 +1175,7 @@
       }
     };
 
-    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V7_STEADY_NEY";
+    const STORAGE_KEY = "MEHA_PUZZLE_SAVE_V8_FAST_NEY_WHEEL_CHEST";
 
     function createDefaultState() {
       return {
@@ -1052,17 +1222,15 @@
 
     const todayStr = () => new Date().toISOString().split("T")[0];
 
-    // محرك موسيقى الناي الفرعوني الثابتة والمسترسلة
+    // محرك موسيقى الناي الفرعوني السريعة والواضحة
     const SoundEngine = {
       ctx: null,
-      volume: 0.8,
+      volume: 0.85,
       muted: false,
       musicTimer: null,
       noteIndex: 0,
       audioEl: null,
       isPlayingGlobal: false,
-      droneOsc: null,
-      droneGain: null,
 
       init() {
         if (!this.ctx) {
@@ -1074,90 +1242,77 @@
         }
       },
 
-      _ensureSteadyDrone() {
-        this.init();
-        if (!this.ctx || this.droneOsc) return;
-        const now = this.ctx.currentTime;
-        this.droneOsc = this.ctx.createOscillator();
-        this.droneGain = this.ctx.createGain();
-        this.droneOsc.type = "sine";
-        this.droneOsc.frequency.setValueAtTime(146.83, now); // D3 قرار ناي ثابت وهادئ
-        this.droneGain.gain.setValueAtTime(0.0001, now);
-        this.droneOsc.connect(this.droneGain);
-        this.droneGain.connect(this.ctx.destination);
-        this.droneOsc.start(now);
-      },
-
-      _syncDroneGain() {
-        if (!this.ctx || !this.droneGain) return;
-        const now = this.ctx.currentTime;
-        const target = (!this.isPlayingGlobal || this.muted || this.volume <= 0)
-          ? 0.0001
-          : Math.min(0.09, 0.065 * this.volume);
-        this.droneGain.gain.setTargetAtTime(target, now, 0.25);
-      },
-
       setVolume(val) {
         this.init();
         this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
         this.muted = this.volume === 0;
         if (this.audioEl) this.audioEl.volume = this.volume;
-        this._syncDroneGain();
+        this._playClearNeyNote(587.33, 0.25, 0.28);
       },
 
-      _playSteadyNeyPhrase(freq, duration = 2.4, gainPeak = 0.16, slideTarget = null) {
+      _playClearNeyNote(freq, duration = 0.36, gainPeak = 0.28, slideTarget = null) {
         this.init();
         if (!this.ctx || this.muted || this.volume <= 0 || !this.isPlayingGlobal) return;
 
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
-        const breathGain = this.ctx.createGain();
+        const overtone = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const overtoneGain = this.ctx.createGain();
 
-        osc.type = "sine";
+        osc.type = "triangle";
         osc.frequency.setValueAtTime(freq, now);
         if (slideTarget) {
-          osc.frequency.linearRampToValueAtTime(slideTarget, now + duration * 0.85);
+          osc.frequency.linearRampToValueAtTime(slideTarget, now + duration * 0.75);
         }
 
-        const peak = Math.min(0.28, gainPeak * this.volume);
-        breathGain.gain.setValueAtTime(0.0005, now);
-        breathGain.gain.linearRampToValueAtTime(peak, now + 0.45);
-        breathGain.gain.linearRampToValueAtTime(peak * 0.88, now + duration * 0.72);
-        breathGain.gain.exponentialRampToValueAtTime(0.0005, now + duration);
+        // توافق نغمي ناعم لإبراز وضوح صوت الناي
+        overtone.type = "sine";
+        overtone.frequency.setValueAtTime(freq * 2, now);
+        if (slideTarget) {
+          overtone.frequency.linearRampToValueAtTime(slideTarget * 2, now + duration * 0.75);
+        }
 
-        osc.connect(breathGain);
-        breathGain.connect(this.ctx.destination);
+        const peak = Math.min(0.45, gainPeak * this.volume);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(peak, now + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        overtoneGain.gain.setValueAtTime(peak * 0.25, now);
+        overtoneGain.gain.exponentialRampToValueAtTime(0.0005, now + duration);
+
+        osc.connect(gain);
+        overtone.connect(overtoneGain);
+        gain.connect(this.ctx.destination);
+        overtoneGain.connect(this.ctx.destination);
 
         osc.start(now);
-        osc.stop(now + duration + 0.05);
+        overtone.start(now);
+        osc.stop(now + duration + 0.03);
+        overtone.stop(now + duration + 0.03);
       },
 
       playSnap() {
-        this._playSteadyNeyPhrase(440.0, 0.45, 0.14, 493.88);
+        this._playClearNeyNote(659.25, 0.22, 0.32, 783.99);
       },
 
       playClick() {
-        this._playSteadyNeyPhrase(392.0, 0.3, 0.11);
+        this._playClearNeyNote(523.25, 0.14, 0.24);
       },
 
       playWinFanfare() {
-        this._playSteadyNeyPhrase(440.0, 1.1, 0.16, 493.88);
-        setTimeout(() => this._playSteadyNeyPhrase(587.33, 1.5, 0.18, 659.25), 750);
+        this._playClearNeyNote(587.33, 0.26, 0.3, 659.25);
+        setTimeout(() => this._playClearNeyNote(783.99, 0.36, 0.34, 880.0), 190);
       },
 
       playGameOver() {
-        this._playSteadyNeyPhrase(329.63, 1.2, 0.14, 293.66);
+        this._playClearNeyNote(392.0, 0.35, 0.25, 329.63);
       },
 
       startGlobalMusic() {
         this.init();
-        if (this.isPlayingGlobal) {
-          this._syncDroneGain();
-          return;
-        }
+        if (this.isPlayingGlobal) return;
         this.isPlayingGlobal = true;
-        this._ensureSteadyDrone();
-        this._syncDroneGain();
 
         if (CONFIG.GLOBAL_MUSIC_URL) {
           this.audioEl = new Audio(CONFIG.GLOBAL_MUSIC_URL);
@@ -1167,32 +1322,33 @@
           return;
         }
 
-        // جمل ناي متصلة بطيئة وهادئة مستوحاة من أسلوب الناي الفرعوني الثابت
-        const neyPhrases = [
-          { f: 293.66, d: 2.6, s: 329.63, stepMs: 2350 },
-          { f: 329.63, d: 2.5, s: 392.00, stepMs: 2250 },
-          { f: 392.00, d: 2.8, s: 440.00, stepMs: 2500 },
-          { f: 440.00, d: 2.4, s: 392.00, stepMs: 2200 },
-          { f: 392.00, d: 2.6, s: 329.63, stepMs: 2350 },
-          { f: 329.63, d: 2.9, s: 293.66, stepMs: 2600 }
+        // تسلسل ناي سريع وواضح بإيقاع متواصل
+        const fastNeySequence = [
+          { f: 440.00, d: 0.32, s: 466.16, step: 290 },
+          { f: 466.16, d: 0.30, s: 587.33, step: 270 },
+          { f: 587.33, d: 0.36, s: 659.25, step: 310 },
+          { f: 659.25, d: 0.28, s: 587.33, step: 260 },
+          { f: 587.33, d: 0.32, s: 466.16, step: 290 },
+          { f: 466.16, d: 0.34, s: 440.00, step: 300 },
+          { f: 587.33, d: 0.28, s: 783.99, step: 260 },
+          { f: 659.25, d: 0.34, s: 587.33, step: 300 }
         ];
 
-        const playNextNey = () => {
+        const playNextFastNote = () => {
           if (!this.isPlayingGlobal) return;
-          const item = neyPhrases[this.noteIndex % neyPhrases.length];
+          const item = fastNeySequence[this.noteIndex % fastNeySequence.length];
           if (!this.muted && this.volume > 0) {
-            this._playSteadyNeyPhrase(item.f, item.d, 0.16, item.s);
+            this._playClearNeyNote(item.f, item.d, 0.26, item.s);
           }
           this.noteIndex++;
-          this.musicTimer = setTimeout(playNextNey, item.stepMs);
+          this.musicTimer = setTimeout(playNextFastNote, item.step);
         };
 
-        playNextNey();
+        playNextFastNote();
       },
 
       stopMusic() {
         this.isPlayingGlobal = false;
-        this._syncDroneGain();
         if (this.musicTimer) {
           clearTimeout(this.musicTimer);
           this.musicTimer = null;
@@ -1537,20 +1693,77 @@
       }
     }
 
+    // عجلة الحظ الدوارة
+    let wheelAngle = 0;
+    let isWheelSpinning = false;
+
+    function openWheelModal() {
+      const resEl = document.getElementById("wheel-result-text");
+      const spinBtn = document.getElementById("btn-spin-wheel");
+      const alreadyUsed = state.wheelDate === todayStr();
+      spinBtn.disabled = alreadyUsed || isWheelSpinning;
+      resEl.textContent = alreadyUsed ? "Daily wheel already used today!" : "";
+      openModal("modal-wheel");
+    }
+
     function spinLuckyWheel() {
-      if (state.wheelDate === todayStr()) return alert("Daily wheel already used!");
-      state.wheelDate = todayStr();
-      const pool = ["coins", "hint", "view"];
-      const pick = pool[Math.floor(Math.random() * pool.length)];
-      if (pick === "coins") { const c = [25, 50, 100][Math.floor(Math.random() * 3)]; state.coins += c; alert(`🎡 +${c} Coin!`); }
-      if (pick === "hint") { state.hints++; alert("🎡 +1 Hint!"); }
-      if (pick === "view") { state.views++; alert("🎡 +1 View!"); }
-      saveProgress();
-      updateUI();
+      if (isWheelSpinning || state.wheelDate === todayStr()) return;
+      isWheelSpinning = true;
+      document.getElementById("btn-spin-wheel").disabled = true;
+      document.getElementById("wheel-result-text").textContent = "🎡 Spinning...";
+      SoundEngine.playClick();
+
+      const prizes = [
+        { type: "coins", amount: 25,  label: "+25 Coins" },
+        { type: "hint",  amount: 1,   label: "+1 Hint" },
+        { type: "coins", amount: 50,  label: "+50 Coins" },
+        { type: "view",  amount: 1,   label: "+1 View" },
+        { type: "coins", amount: 100, label: "+100 Coins" },
+        { type: "hint",  amount: 1,   label: "+1 Hint" }
+      ];
+      const idx = Math.floor(Math.random() * prizes.length);
+      const chosen = prizes[idx];
+      const extraSpins = 5 * 360;
+      const targetSliceCenter = idx * 60 + 30;
+      wheelAngle += extraSpins + (360 - targetSliceCenter);
+
+      const disc = document.getElementById("lucky-wheel-disc");
+      disc.style.transform = `rotate(${wheelAngle}deg)`;
+
+      setTimeout(() => {
+        state.wheelDate = todayStr();
+        if (chosen.type === "coins") state.coins += chosen.amount;
+        if (chosen.type === "hint") state.hints += chosen.amount;
+        if (chosen.type === "view") state.views += chosen.amount;
+        saveProgress();
+        updateUI();
+        SoundEngine.playWinFanfare();
+        document.getElementById("wheel-result-text").textContent = `🎉 Reward: ${chosen.label}!`;
+        isWheelSpinning = false;
+      }, 3250);
+    }
+
+    // صندوق الكنز الفرعوني في المتجر
+    function openStoreModal() {
+      const chestVisual = document.getElementById("pharaoh-chest-visual");
+      const rewardPop = document.getElementById("chest-reward-pop");
+      const openBtn = document.getElementById("btn-open-chest");
+      const claimed = state.boxDate === todayStr();
+
+      chestVisual.classList.toggle("opened", claimed);
+      openBtn.disabled = claimed;
+      if (claimed) {
+        rewardPop.style.display = "block";
+        rewardPop.textContent = "☥ Daily Pharaonic Treasure already claimed today!";
+      } else {
+        rewardPop.style.display = "none";
+        rewardPop.textContent = "";
+      }
+      openModal("modal-store");
     }
 
     function claimDailyStoreBox() {
-      if (state.boxDate === todayStr()) return alert("Daily box already claimed!");
+      if (state.boxDate === todayStr()) return;
       state.boxDate = todayStr();
       const c = [50, 70, 100, 150, 200][Math.floor(Math.random() * 5)];
       const bonus = Math.random() > 0.5 ? "hint" : "view";
@@ -1558,7 +1771,16 @@
       if (bonus === "hint") state.hints++; else state.views++;
       saveProgress();
       updateUI();
-      alert(`🎁 +${c} Coin + 1 ${bonus.toUpperCase()}`);
+      SoundEngine.playWinFanfare();
+
+      const chestVisual = document.getElementById("pharaoh-chest-visual");
+      const rewardPop = document.getElementById("chest-reward-pop");
+      const openBtn = document.getElementById("btn-open-chest");
+
+      chestVisual.classList.add("opened");
+      openBtn.disabled = true;
+      rewardPop.style.display = "block";
+      rewardPop.textContent = `👑 +${c} Coins + 1 ${bonus.toUpperCase()} emerged from the chest!`;
     }
 
     function buyStoreItem(type, price) {
