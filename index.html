@@ -201,51 +201,51 @@
       <span></span><span></span><span></span><span></span>
     </div>
     <h1 style="color:#ffd700; font-size:2rem;">MEHA PUZZLE</h1>
-    <p>جاري فتح أبواب المعبد الفرعوني...</p>
+    <p data-i18n="loading">جاري فتح أبواب المعبد الفرعوني...</p>
   </div>
 
   <header class="top-bar">
     <div class="badge-box">
-      👑 <span id="ui-username">مستكشف</span> | <span id="ui-rank">🏺 المستكشف المبتدئ</span>
+      👑 <span id="ui-username" data-i18n="explorerDefault">مستكشف</span> | <span id="ui-rank">🏺 المستكشف المبتدئ</span>
     </div>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
       <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
       <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
-      <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')">⚙️ الإعدادات</button>
+      <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">⚙️ الإعدادات</button>
     </div>
   </header>
 
   <main id="screen-home" class="screen active">
     <div class="temple-backdrop">
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
-        <h3>🏛️ الملف الشخصي</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-museum')">🏺 المتحف</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-achievements')">🏅 الإنجازات</button>
+        <h3 data-i18n="profileTitle">🏛️ الملف الشخصي</h3>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-museum')" data-i18n="museumBtn">🏺 المتحف</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-achievements')" data-i18n="achievementsBtn">🏅 الإنجازات</button>
         <div class="item-card">
-          <small>نقاط الخبرة XP</small>
+          <small data-i18n="xpLabel">نقاط الخبرة XP</small>
           <div id="ui-xp" style="font-weight:bold; color:#ffd700;">0 XP</div>
         </div>
       </aside>
 
       <section class="center-sanctuary">
-        <h2 style="font-size:1.8rem; color:#ffd700;">المعابد والأهرامات ونهر النيل</h2>
-        <p>اختر مستوى اللعب أو افتح اللغز اليومي لاكتشاف الكنز المفقود</p>
+        <h2 style="font-size:1.8rem; color:#ffd700;" data-i18n="homeTitle">المعابد والأهرامات ونهر النيل</h2>
+        <p data-i18n="homeSubtitle">اختر مستوى اللعب أو افتح اللغز اليومي لاكتشاف الكنز المفقود</p>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('easy')">🟢 سهل (2:00 د - 20 🪙)</button>
-          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('medium')">🟡 متوسط (3:30 د - 30 🪙)</button>
-          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('hard')">🔴 صعب (5:00 د - 50 🪙 + أثر)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('easy')" data-i18n="easyBtn">🟢 سهل (2:00 د - 20 🪙)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('medium')" data-i18n="mediumBtn">🟡 متوسط (3:30 د - 30 🪙)</button>
+          <button class="stone-btn" onclick="SoundEngine.playClick(); startRandomLevel('hard')" data-i18n="hardBtn">🔴 صعب (5:00 د - 50 🪙 + أثر)</button>
         </div>
 
-        <button class="stone-btn" style="background:linear-gradient(180deg,#0f6b58,#083d32);" onclick="SoundEngine.playClick(); startDailyPuzzle()">
+        <button class="stone-btn" style="background:linear-gradient(180deg,#0f6b58,#083d32);" onclick="SoundEngine.playClick(); startDailyPuzzle()" data-i18n="dailyBtn">
           🗺️ اللغز اليومي: الكنز المفقود (مرة يومياً)
         </button>
       </section>
 
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
-        <h3>🎡 عجلة الحظ والمتجر</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); spinLuckyWheel()">🎡 عجلة الحظ (مرة/يوم)</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-store')">🛒 المتجر</button>
+        <h3 data-i18n="rewardsTitle">🎡 عجلة الحظ والمتجر</h3>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); spinLuckyWheel()" data-i18n="wheelBtn">🎡 عجلة الحظ (مرة/يوم)</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-store')" data-i18n="storeBtn">🛒 المتجر</button>
       </aside>
     </div>
   </main>
@@ -253,7 +253,7 @@
   <section id="screen-game" class="screen">
     <div id="puzzle-workspace">
       <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center;">
-        <button class="stone-btn" onclick="SoundEngine.playClick(); exitToHome()">🔙 خروج</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); exitToHome()" data-i18n="exitBtn">🔙 خروج</button>
         <h3 id="game-level-title">المرحلة</h3>
         <div class="badge-box" style="color:#ffd700;">⏳ <span id="game-timer">02:00</span></div>
         <button class="stone-btn" onclick="SoundEngine.playClick(); zoomCanvas(0.1)">➕</button>
@@ -271,78 +271,79 @@
 
   <div id="modal-store" class="modal">
     <div class="modal-card">
-      <h3>🛒 متجر MEHA</h3>
+      <h3 data-i18n="storeTitle">🛒 متجر MEHA</h3>
       <div class="item-card" style="margin:12px 0;">
-        <h4>🎁 صندوق المكافأة اليومي المجاني</h4>
-        <p>عملات عشوائية (50 - 200) + Hint أو View</p>
-        <button class="stone-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()">افتح الصندوق مجاناً</button>
+        <h4 data-i18n="dailyBoxTitle">🎁 صندوق المكافأة اليومي المجاني</h4>
+        <p data-i18n="dailyBoxDesc">عملات عشوائية (50 - 200) + Hint أو View</p>
+        <button class="stone-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()" data-i18n="openBoxBtn">افتح الصندوق مجاناً</button>
       </div>
       <div class="grid-cards">
         <div class="item-card">
           <h4>💡 Hint</h4>
-          <p>100 Coin (حد 3/يوم)</p>
-          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('hint', 100)">شراء</button>
+          <p>100 Coin (3/day)</p>
+          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('hint', 100)" data-i18n="buyBtn">شراء</button>
         </div>
         <div class="item-card">
           <h4>👁️ View</h4>
-          <p>200 Coin (حد 3/يوم)</p>
-          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('view', 200)">شراء</button>
+          <p>200 Coin (3/day)</p>
+          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('view', 200)" data-i18n="buyBtn">شراء</button>
         </div>
       </div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-store')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-store')" data-i18n="closeBtn">إغلاق</button>
     </div>
   </div>
 
   <div id="modal-museum" class="modal">
     <div class="modal-card">
-      <h3>🏺 المتحف الشخصي</h3>
+      <h3 data-i18n="museumTitle">🏺 المتحف الشخصي</h3>
       <div id="museum-grid" class="grid-cards"></div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-museum')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-museum')" data-i18n="closeBtn">إغلاق</button>
     </div>
   </div>
 
   <div id="modal-achievements" class="modal">
     <div class="modal-card">
-      <h3>🏅 الإنجازات والألقاب</h3>
+      <h3 data-i18n="achievementsTitle">🏅 الإنجازات والألقاب</h3>
       <div class="grid-cards">
-        <div class="item-card">🏺 مستكشف الآثار</div>
-        <div class="item-card">🧩 خبير البازل</div>
-        <div class="item-card">🗝️ حارس الأسرار</div>
-        <div class="item-card">👑 أسطورة MEHA</div>
+        <div class="item-card" data-i18n="ach1">🏺 مستكشف الآثار</div>
+        <div class="item-card" data-i18n="ach2">🧩 خبير البازل</div>
+        <div class="item-card" data-i18n="ach3">🗝️ حارس الأسرار</div>
+        <div class="item-card" data-i18n="ach4">👑 أسطورة MEHA</div>
       </div>
-      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-achievements')">إغلاق</button>
+      <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-achievements')" data-i18n="closeBtn">إغلاق</button>
     </div>
   </div>
 
   <div id="modal-settings" class="modal">
     <div class="modal-card">
-      <h3>⚙️ الإعدادات</h3>
+      <h3 data-i18n="settingsTitle">⚙️ الإعدادات</h3>
       <div style="margin:12px 0;">
-        <label>🎵 مستوى الصوت والموسيقى:</label>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.6" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
+        <label data-i18n="volumeLabel">🎵 مستوى الصوت والموسيقى:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
+        <button class="stone-btn" style="margin-top:8px;" onclick="SoundEngine.playLevelMusic('giza')" data-i18n="testMusicBtn">🎶 اختبار الموسيقى الفرعونية</button>
       </div>
       <div style="margin:12px 0;">
-        <label>🌐 اللغة:</label>
-        <select class="stone-btn" style="width:100%;" onchange="changeLang(this.value)">
+        <label data-i18n="langLabel">🌐 اللغة:</label>
+        <select id="lang-select" class="stone-btn" style="width:100%;" onchange="changeLang(this.value)">
           <option value="ar">العربية</option>
           <option value="en">English</option>
           <option value="fr">Français</option>
           <option value="zh">中文</option>
         </select>
       </div>
-      <button class="stone-btn" style="width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-settings')">حفظ وإغلاق</button>
+      <button class="stone-btn" style="width:100%;" onclick="SoundEngine.playClick(); SoundEngine.stopMusic(); closeModal('modal-settings')" data-i18n="saveCloseBtn">حفظ وإغلاق</button>
     </div>
   </div>
 
   <div id="modal-win" class="modal">
     <div class="modal-card" style="text-align:center;">
-      <h2 style="color:#ffd700;">🎉 أحسنت! تم إكمال البازل</h2>
+      <h2 style="color:#ffd700;" data-i18n="winTitle">🎉 أحسنت! تم إكمال البازل</h2>
       <p id="win-rewards" style="margin:10px 0; font-weight:bold;"></p>
       <div class="item-card" style="text-align:right;">
-        <h4>📜 معلومة عن الصورة:</h4>
+        <h4 data-i18n="factTitle">📜 معلومة عن الصورة:</h4>
         <p id="win-fact"></p>
       </div>
-      <button class="stone-btn" style="margin-top:14px;" onclick="closeWin()">متابعة</button>
+      <button class="stone-btn" style="margin-top:14px;" onclick="closeWin()" data-i18n="continueBtn">متابعة</button>
     </div>
   </div>
 
@@ -356,34 +357,203 @@
         hard:   { rows: 5, cols: 5, timeSec: 300, coins: 50, xp: 120, rotate: true, artifact: true }
       },
       RANKS: [
-        { minXp: 0, label: "🏺 المستكشف المبتدئ" },
-        { minXp: 250, label: "🧭 باحث الآثار" },
-        { minXp: 600, label: "📜 عالم المصريات" },
-        { minXp: 1200, label: "👁️ حارس الأسرار" },
-        { minXp: 2500, label: "👑 أسطورة الفراعنة" }
+        { minXp: 0,    ar: "🏺 المستكشف المبتدئ", en: "🏺 Novice Explorer", fr: "🏺 Explorateur Débutant", zh: "🏺 初级探险家" },
+        { minXp: 250,  ar: "🧭 باحث الآثار",       en: "🧭 Archaeology Seeker", fr: "🧭 Chercheur d'Antiquités", zh: "🧭 文物寻宝者" },
+        { minXp: 600,  ar: "📜 عالم المصريات",     en: "📜 Egyptologist", fr: "📜 Égyptologue", zh: "📜 埃及学家" },
+        { minXp: 1200, ar: "👁️ حارس الأسرار",      en: "👁️ Guardian of Secrets", fr: "👁️ Gardien des Secrets", zh: "👁️ 秘密守护者" },
+        { minXp: 2500, ar: "👑 أسطورة الفراعنة",   en: "👑 Pharaoh Legend", fr: "👑 Légende des Pharaons", zh: "👑 法老传奇" }
       ],
       LEVELS: [
         {
           id: "giza",
-          title: "أهرامات الجيزة وأبو الهول",
+          title: { ar: "أهرامات الجيزة وأبو الهول", en: "Giza Pyramids & Sphinx", fr: "Pyramides de Gizeh & Sphinx", zh: "吉萨金字塔与狮身人面像" },
           img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=800&q=80",
-          fact: "الأهرامات الثلاثة في الجيزة من أعظم الإنجازات المعمارية في مصر القديمة."
+          fact: {
+            ar: "الأهرامات الثلاثة في الجيزة من أعظم الإنجازات المعمارية في مصر القديمة.",
+            en: "The three pyramids of Giza are among the greatest architectural achievements of ancient Egypt.",
+            fr: "Les trois pyramides de Gizeh comptent parmi les plus grands chefs-d'œuvre de l'Égypte antique.",
+            zh: "吉萨三大金字塔是古埃及最伟大的建筑成就之一。"
+          }
         },
         {
           id: "luxor",
-          title: "معبد الكرنك ونهر النيل",
+          title: { ar: "معبد الكرنك ونهر النيل", en: "Karnak Temple & Nile", fr: "Temple de Karnak & Nil", zh: "卡尔纳克神庙与尼罗河" },
           img: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=800&q=80",
-          fact: "كان نهر النيل محور الحياة والزراعة والحضارة المصرية القديمة."
+          fact: {
+            ar: "كان نهر النيل محور الحياة والزراعة والحضارة المصرية القديمة.",
+            en: "The Nile River was the lifeblood of agriculture and civilization in ancient Egypt.",
+            fr: "Le Nil était le cœur de la vie, de l'agriculture et de la civilisation égyptienne antique.",
+            zh: "尼罗河是古埃及农业与文明的生命之源。"
+          }
         }
       ],
       ARTIFACTS: [
         { icon: "🎭", name: "قناع ذهبي ملكي" },
         { icon: "🪲", name: "جعران المعبد" },
         { icon: "☥", name: "رمز العنخ المقدس" }
-      ]
+      ],
+      LANGS: {
+        ar: {
+          loading: "جاري فتح أبواب المعبد الفرعوني...",
+          explorerDefault: "مستكشف",
+          settingsBtn: "⚙️ الإعدادات",
+          profileTitle: "🏛️ الملف الشخصي",
+          museumBtn: "🏺 المتحف",
+          achievementsBtn: "🏅 الإنجازات",
+          xpLabel: "نقاط الخبرة XP",
+          homeTitle: "المعابد والأهرامات ونهر النيل",
+          homeSubtitle: "اختر مستوى اللعب أو افتح اللغز اليومي لاكتشاف الكنز المفقود",
+          easyBtn: "🟢 سهل (2:00 د - 20 🪙)",
+          mediumBtn: "🟡 متوسط (3:30 د - 30 🪙)",
+          hardBtn: "🔴 صعب (5:00 د - 50 🪙 + أثر)",
+          dailyBtn: "🗺️ اللغز اليومي: الكنز المفقود (مرة يومياً)",
+          rewardsTitle: "🎡 عجلة الحظ والمتجر",
+          wheelBtn: "🎡 عجلة الحظ (مرة/يوم)",
+          storeBtn: "🛒 المتجر",
+          exitBtn: "🔙 خروج",
+          storeTitle: "🛒 متجر MEHA",
+          dailyBoxTitle: "🎁 صندوق المكافأة اليومي المجاني",
+          dailyBoxDesc: "عملات عشوائية (50 - 200) + Hint أو View",
+          openBoxBtn: "افتح الصندوق مجاناً",
+          buyBtn: "شراء",
+          closeBtn: "إغلاق",
+          museumTitle: "🏺 المتحف الشخصي",
+          achievementsTitle: "🏅 الإنجازات والألقاب",
+          ach1: "🏺 مستكشف الآثار",
+          ach2: "🧩 خبير البازل",
+          ach3: "🗝️ حارس الأسرار",
+          ach4: "👑 أسطورة MEHA",
+          settingsTitle: "⚙️ الإعدادات",
+          volumeLabel: "🎵 مستوى الصوت والموسيقى:",
+          testMusicBtn: "🎶 اختبار الموسيقى الفرعونية",
+          langLabel: "🌐 اللغة:",
+          saveCloseBtn: "حفظ وإغلاق",
+          winTitle: "🎉 أحسنت! تم إكمال البازل",
+          factTitle: "📜 معلومة عن الصورة:",
+          continueBtn: "متابعة"
+        },
+        en: {
+          loading: "Opening the doors of the Pharaonic temple...",
+          explorerDefault: "Explorer",
+          settingsBtn: "⚙️ Settings",
+          profileTitle: "🏛️ Profile",
+          museumBtn: "🏺 Museum",
+          achievementsBtn: "🏅 Achievements",
+          xpLabel: "Experience XP",
+          homeTitle: "Temples, Pyramids & The Nile",
+          homeSubtitle: "Choose a difficulty or open the Daily Puzzle to find the Lost Treasure",
+          easyBtn: "🟢 Easy (2:00m - 20 🪙)",
+          mediumBtn: "🟡 Medium (3:30m - 30 🪙)",
+          hardBtn: "🔴 Hard (5:00m - 50 🪙 + Relic)",
+          dailyBtn: "🗺️ Daily Puzzle: Lost Treasure (Once/Day)",
+          rewardsTitle: "🎡 Lucky Wheel & Store",
+          wheelBtn: "🎡 Lucky Wheel (Once/Day)",
+          storeBtn: "🛒 Store",
+          exitBtn: "🔙 Exit",
+          storeTitle: "🛒 MEHA Store",
+          dailyBoxTitle: "🎁 Free Daily Reward Box",
+          dailyBoxDesc: "Random coins (50 - 200) + Hint or View",
+          openBoxBtn: "Open Free Box",
+          buyBtn: "Buy",
+          closeBtn: "Close",
+          museumTitle: "🏺 Personal Museum",
+          achievementsTitle: "🏅 Achievements & Titles",
+          ach1: "🏺 Relic Explorer",
+          ach2: "🧩 Puzzle Master",
+          ach3: "🗝️ Keeper of Secrets",
+          ach4: "👑 MEHA Legend",
+          settingsTitle: "⚙️ Settings",
+          volumeLabel: "🎵 Sound & Music Volume:",
+          testMusicBtn: "🎶 Test Pharaonic Music",
+          langLabel: "🌐 Language:",
+          saveCloseBtn: "Save & Close",
+          winTitle: "🎉 Great Job! Puzzle Completed",
+          factTitle: "📜 Historical Fact:",
+          continueBtn: "Continue"
+        },
+        fr: {
+          loading: "Ouverture des portes du temple pharaonique...",
+          explorerDefault: "Explorateur",
+          settingsBtn: "⚙️ Paramètres",
+          profileTitle: "🏛️ Profil",
+          museumBtn: "🏺 Musée",
+          achievementsBtn: "🏅 Succès",
+          xpLabel: "Points XP",
+          homeTitle: "Temples, Pyramides & Nil",
+          homeSubtitle: "Choisissez un niveau ou ouvrez l'énigme quotidienne du trésor perdu",
+          easyBtn: "🟢 Facile (2:00m - 20 🪙)",
+          mediumBtn: "🟡 Moyen (3:30m - 30 🪙)",
+          hardBtn: "🔴 Difficile (5:00m - 50 🪙 + Relique)",
+          dailyBtn: "🗺️ Énigme Quotidienne : Trésor Perdu",
+          rewardsTitle: "🎡 Roue & Boutique",
+          wheelBtn: "🎡 Roue de la Chance (1/jour)",
+          storeBtn: "🛒 Boutique",
+          exitBtn: "🔙 Quitter",
+          storeTitle: "🛒 Boutique MEHA",
+          dailyBoxTitle: "🎁 Coffre Quotidien Gratuit",
+          dailyBoxDesc: "Pièces aléatoires (50 - 200) + Hint ou View",
+          openBoxBtn: "Ouvrir Gratuitement",
+          buyBtn: "Acheter",
+          closeBtn: "Fermer",
+          museumTitle: "🏺 Musée Personnel",
+          achievementsTitle: "🏅 Succès & Titres",
+          ach1: "🏺 Explorateur de Reliques",
+          ach2: "🧩 Maître du Puzzle",
+          ach3: "🗝️ Gardien des Secrets",
+          ach4: "👑 Légende MEHA",
+          settingsTitle: "⚙️ Paramètres",
+          volumeLabel: "🎵 Volume Son & Musique :",
+          testMusicBtn: "🎶 Tester la Musique Pharaonique",
+          langLabel: "🌐 Langue :",
+          saveCloseBtn: "Enregistrer & Fermer",
+          winTitle: "🎉 Bravo ! Puzzle Terminé",
+          factTitle: "📜 Anecdote Historique :",
+          continueBtn: "Continuer"
+        },
+        zh: {
+          loading: "正在打开法老神庙的大门...",
+          explorerDefault: "探险家",
+          settingsBtn: "⚙️ 设置",
+          profileTitle: "🏛️ 个人资料",
+          museumBtn: "🏺 博物馆",
+          achievementsBtn: "🏅 成就",
+          xpLabel: "经验值 XP",
+          homeTitle: "神庙、金字塔与尼罗河",
+          homeSubtitle: "选择难度或开启每日谜题寻找失落宝藏",
+          easyBtn: "🟢 简单 (2:00分 - 20 🪙)",
+          mediumBtn: "🟡 中等 (3:30分 - 30 🪙)",
+          hardBtn: "🔴 困难 (5:00分 - 50 🪙 + 文物)",
+          dailyBtn: "🗺️ 每日谜题：失落宝藏（每日一次）",
+          rewardsTitle: "🎡 幸运转盘与商店",
+          wheelBtn: "🎡 幸运转盘（每日一次）",
+          storeBtn: "🛒 商店",
+          exitBtn: "🔙 退出",
+          storeTitle: "🛒 MEHA 商店",
+          dailyBoxTitle: "🎁 每日免费奖励箱",
+          dailyBoxDesc: "随机金币 (50 - 200) + Hint 或 View",
+          openBoxBtn: "免费打开",
+          buyBtn: "购买",
+          closeBtn: "关闭",
+          museumTitle: "🏺 个人博物馆",
+          achievementsTitle: "🏅 成就与头衔",
+          ach1: "🏺 文物探险家",
+          ach2: "🧩 拼图大师",
+          ach3: "🗝️ 秘密守护者",
+          ach4: "👑 MEHA 传奇",
+          settingsTitle: "⚙️ 设置",
+          volumeLabel: "🎵 音效与音乐音量：",
+          testMusicBtn: "🎶 测试法老音乐",
+          langLabel: "🌐 语言：",
+          saveCloseBtn: "保存并关闭",
+          winTitle: "🎉 太棒了！拼图完成",
+          factTitle: "📜 历史知识：",
+          continueBtn: "继续"
+        }
+      }
     };
 
     const state = {
+      lang: "ar",
       coins: 150,
       xp: 0,
       hints: 3,
@@ -401,10 +571,10 @@
 
     const todayStr = () => new Date().toISOString().split("T")[0];
 
-    // نظام الصوت والموسيقى الفرعونية
+    // نظام الصوت والموسيقى الفرعونية المحسّن
     const SoundEngine = {
       ctx: null,
-      volume: 0.6,
+      volume: 0.7,
       muted: false,
       musicTimer: null,
 
@@ -419,11 +589,13 @@
       },
 
       setVolume(val) {
+        this.init();
         this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
         this.muted = this.volume === 0;
+        this._playTone(523.25, 0.1, "triangle", 0, 0.25);
       },
 
-      _playTone(freq, duration = 0.25, type = "sine", delay = 0, gainPeak = 0.18) {
+      _playTone(freq, duration = 0.3, type = "triangle", delay = 0, gainPeak = 0.28) {
         this.init();
         if (!this.ctx || this.muted || this.volume <= 0) return;
 
@@ -434,43 +606,45 @@
         osc.type = type;
         osc.frequency.setValueAtTime(freq, now);
 
-        const finalGain = gainPeak * this.volume;
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(finalGain, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        const finalGain = Math.min(0.8, gainPeak * this.volume);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(finalGain, now + 0.025);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
 
         osc.start(now);
-        osc.stop(now + duration + 0.02);
+        osc.stop(now + duration + 0.03);
       },
 
       playSnap() {
-        this._playTone(523.25, 0.12, "triangle", 0, 0.22);
-        this._playTone(783.99, 0.16, "sine", 0.06, 0.18);
+        this._playTone(523.25, 0.14, "triangle", 0, 0.3);
+        this._playTone(783.99, 0.18, "sine", 0.06, 0.26);
       },
 
       playClick() {
-        this._playTone(440, 0.08, "sine", 0, 0.12);
+        this._playTone(440, 0.09, "triangle", 0, 0.18);
       },
 
       playWinFanfare() {
         const notes = [392.0, 493.88, 587.33, 783.99];
         notes.forEach((n, idx) => {
-          this._playTone(n, 0.28, "triangle", idx * 0.12, 0.22);
+          this._playTone(n, 0.32, "triangle", idx * 0.13, 0.32);
         });
       },
 
       playGameOver() {
         const notes = [349.23, 311.13, 261.63];
         notes.forEach((n, idx) => {
-          this._playTone(n, 0.35, "sawtooth", idx * 0.18, 0.14);
+          this._playTone(n, 0.38, "sawtooth", idx * 0.18, 0.22);
         });
       },
 
       playLevelMusic(levelId = "giza") {
         this.stopMusic();
+        this.init();
+
         const themes = {
           giza:  [293.66, 349.23, 440.0, 466.16, 587.33, 440.0],
           luxor: [329.63, 392.0, 493.88, 523.25, 659.25, 523.25]
@@ -481,10 +655,10 @@
         const playStep = () => {
           if (!this.muted && this.volume > 0) {
             const freq = scale[step % scale.length];
-            this._playTone(freq, 0.45, "sine", 0, 0.14);
+            this._playTone(freq, 0.45, "triangle", 0, 0.28);
             step++;
           }
-          this.musicTimer = setTimeout(playStep, 480);
+          this.musicTimer = setTimeout(playStep, 460);
         };
 
         playStep();
@@ -498,6 +672,9 @@
       }
     };
 
+    // تفعيل الصوت تلقائياً مع أول تفاعل للمستخدم
+    document.addEventListener("pointerdown", () => SoundEngine.init(), { once: false });
+
     // تهيئة Pi SDK
     if (window.Pi) {
       window.Pi.init({ version: "2.0", sandbox: true });
@@ -510,8 +687,8 @@
         .catch(() => {});
     }
 
-    // إخفاء شاشة التحميل
     window.addEventListener("DOMContentLoaded", () => {
+      changeLang(state.lang);
       updateUI();
       setTimeout(() => {
         const sp = document.getElementById("splash-screen");
@@ -528,6 +705,11 @@
     imgObj.crossOrigin = "anonymous";
 
     let timerId = null, timeLeft = 0, currentGame = null;
+
+    function getLocalized(obj) {
+      if (!obj) return "";
+      return typeof obj === "string" ? obj : (obj[state.lang] || obj.ar);
+    }
 
     function startRandomLevel(diffKey) {
       regenLives();
@@ -549,7 +731,7 @@
       SoundEngine.stopMusic();
       document.getElementById("screen-home").classList.remove("active");
       document.getElementById("screen-game").classList.add("active");
-      document.getElementById("game-level-title").textContent = currentGame.lvl.title;
+      document.getElementById("game-level-title").textContent = getLocalized(currentGame.lvl.title);
       zoom = 1;
       showPreview = false;
 
@@ -593,7 +775,7 @@
           SoundEngine.playGameOver();
           state.lives = Math.max(0, state.lives - 1);
           updateUI();
-          alert("Game Over! انتهى الوقت، ستبدأ من جديد في نفس المستوى ونفس الصورة.");
+          alert("Game Over!");
           setupPuzzle();
         }
       }, 1000);
@@ -723,7 +905,7 @@
           SoundEngine.playSnap();
           updateUI(); drawBoard(); checkWin();
         }
-      } else if (confirm("نفدت Hint! هل تريد مشاهدة فيديو قصير (حتى 30 ثانية) للحصول على Hint؟")) {
+      } else if (confirm("30s video reward for 1 Hint?")) {
         state.hints++; updateUI();
       }
     }
@@ -735,7 +917,7 @@
         updateUI();
         showPreview = true; drawBoard();
         setTimeout(() => { showPreview = false; drawBoard(); }, 7000);
-      } else if (confirm("نفدت View! هل تريد مشاهدة فيديو قصير (حتى 30 ثانية) للحصول على View؟")) {
+      } else if (confirm("30s video reward for 1 View?")) {
         state.views++; updateUI();
       }
     }
@@ -750,67 +932,67 @@
         if (isDaily) {
           state.dailyPuzzleDate = todayStr();
           state.coins += 60; state.xp += 100;
-          msg = "+60 Coin و +100 XP واكتشاف قطعة من الكنز المفقود!";
+          msg = "+60 Coin & +100 XP (Lost Treasure)";
         } else if (!state.claimedLevels.includes(key)) {
           state.claimedLevels.push(key);
           state.coins += diff.coins; state.xp += diff.xp;
-          msg = `+${diff.coins} Coin و +${diff.xp} XP`;
+          msg = `+${diff.coins} Coin & +${diff.xp} XP`;
           if (diff.artifact) {
             const art = CONFIG.ARTIFACTS[Math.floor(Math.random() * CONFIG.ARTIFACTS.length)];
             if (!state.artifacts.some(a => a.name === art.name)) {
               state.artifacts.push(art);
-              msg += ` + مقتنى نادر للمتحف: ${art.name}`;
+              msg += ` + ${art.name}`;
             }
           }
         } else {
-          msg = "إعادة مرحلة ناجحة (تم أخذ مكافأة الإكمال الأول سابقاً).";
+          msg = "+0 (Already claimed first-time reward)";
         }
 
         updateUI();
         SoundEngine.playWinFanfare();
         SoundEngine.playLevelMusic(lvl.id);
         document.getElementById("win-rewards").textContent = msg;
-        document.getElementById("win-fact").textContent = lvl.fact;
+        document.getElementById("win-fact").textContent = getLocalized(lvl.fact);
         openModal("modal-win");
       }
     }
 
     function spinLuckyWheel() {
-      if (state.wheelDate === todayStr()) return alert("لقد استخدمت عجلة الحظ اليوم!");
+      if (state.wheelDate === todayStr()) return alert("Daily wheel already used!");
       state.wheelDate = todayStr();
       const pool = ["coins", "hint", "view"];
       const pick = pool[Math.floor(Math.random() * pool.length)];
-      if (pick === "coins") { const c = [25, 50, 100][Math.floor(Math.random() * 3)]; state.coins += c; alert(`🎡 ربحت ${c} Coin!`); }
-      if (pick === "hint") { state.hints++; alert("🎡 ربحت 1 Hint!"); }
-      if (pick === "view") { state.views++; alert("🎡 ربحت 1 View!"); }
+      if (pick === "coins") { const c = [25, 50, 100][Math.floor(Math.random() * 3)]; state.coins += c; alert(`🎡 +${c} Coin!`); }
+      if (pick === "hint") { state.hints++; alert("🎡 +1 Hint!"); }
+      if (pick === "view") { state.views++; alert("🎡 +1 View!"); }
       updateUI();
     }
 
     function claimDailyStoreBox() {
-      if (state.boxDate === todayStr()) return alert("تم فتح صندوق المتجر اليومي اليوم بالفعل!");
+      if (state.boxDate === todayStr()) return alert("Daily box already claimed!");
       state.boxDate = todayStr();
       const c = [50, 70, 100, 150, 200][Math.floor(Math.random() * 5)];
       const bonus = Math.random() > 0.5 ? "hint" : "view";
       state.coins += c;
       if (bonus === "hint") state.hints++; else state.views++;
       updateUI();
-      alert(`🎁 حصلت على ${c} Coin + 1 ${bonus.toUpperCase()}!`);
+      alert(`🎁 +${c} Coin + 1 ${bonus.toUpperCase()}`);
     }
 
     function buyStoreItem(type, price) {
-      if (state.coins < price) return alert("رصيدك من العملات غير كافٍ!");
+      if (state.coins < price) return alert("Not enough coins!");
       const t = todayStr();
       if (type === "hint") {
         if (state.hintBuys.date !== t) state.hintBuys = { date: t, count: 0 };
-        if (state.hintBuys.count >= 3) return alert("الحد الأقصى لشراء Hint هو 3 مرات يومياً.");
+        if (state.hintBuys.count >= 3) return alert("Daily limit (3) reached.");
         state.coins -= price; state.hints++; state.hintBuys.count++;
       } else {
         if (state.viewBuys.date !== t) state.viewBuys = { date: t, count: 0 };
-        if (state.viewBuys.count >= 3) return alert("الحد الأقصى لشراء View هو 3 مرات يومياً.");
+        if (state.viewBuys.count >= 3) return alert("Daily limit (3) reached.");
         state.coins -= price; state.views++; state.viewBuys.count++;
       }
       updateUI();
-      alert("تم الشراء بنجاح!");
+      alert("Purchased!");
     }
 
     function regenLives() {
@@ -829,15 +1011,28 @@
       document.getElementById("ui-hints").textContent = state.hints;
       document.getElementById("ui-views").textContent = state.views;
       const rank = [...CONFIG.RANKS].reverse().find(r => state.xp >= r.minXp);
-      document.getElementById("ui-rank").textContent = rank.label;
+      document.getElementById("ui-rank").textContent = getLocalized(rank);
       document.getElementById("museum-grid").innerHTML = state.artifacts.length
         ? state.artifacts.map(a => `<div class="item-card"><div style="font-size:1.8rem;">${a.icon}</div><div>${a.name}</div></div>`).join("")
-        : "<p>اجمع مقتنيات نادرة من المراحل الصعبة.</p>";
+        : "<p>🏺</p>";
     }
 
     function changeLang(l) {
+      state.lang = l;
       document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
       document.documentElement.lang = l;
+      document.getElementById("lang-select").value = l;
+
+      const dict = CONFIG.LANGS[l] || CONFIG.LANGS.ar;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+
+      if (currentGame) {
+        document.getElementById("game-level-title").textContent = getLocalized(currentGame.lvl.title);
+      }
+      updateUI();
     }
 
     function openModal(id) { document.getElementById(id).classList.add("open"); }
