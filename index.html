@@ -1043,11 +1043,149 @@
       document.getElementById("screen-game").classList.remove("active");
       document.getElementById("screen-home").classList.add("active");
     }
-    function closeWin() {
-      SoundEngine.stopMusic();
-      closeModal("modal-win");
-      exitToHome();
-    }
+    // نظام الصوت والموسيقى الفرعونية الحماسية (إيقاع + لحن + طبول)
+    const SoundEngine = {
+      ctx: null,
+      volume: 0.8,
+      muted: false,
+      musicTimer: null,
+      beatCount: 0,
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+      },
+
+      setVolume(val) {
+        this.init();
+        this.volume = Math.max(0, Math.min(1, parseFloat(val) || 0));
+        this.muted = this.volume === 0;
+        this._playDrum(130, 0.12, 0.35);
+      },
+
+      _playTone(freq, duration = 0.25, type = "sawtooth", delay = 0, gainPeak = 0.22, slideTo = null) {
+        this.init();
+        if (!this.ctx || this.muted || this.volume <= 0) return;
+
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        if (slideTo) {
+          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        }
+
+        const finalGain = Math.min(0.75, gainPeak * this.volume);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(finalGain, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration + 0.03);
+      },
+
+      // ضربة طبلة فرعونية عميقة
+      _playDrum(startFreq = 140, duration = 0.22, gainPeak = 0.45, delay = 0) {
+        this._playTone(startFreq, duration, "sine", delay, gainPeak, 42);
+      },
+
+      playSnap() {
+        this._playTone(587.33, 0.11, "triangle", 0, 0.32);
+        this._playTone(880.0, 0.16, "sine", 0.05, 0.28);
+      },
+
+      playClick() {
+        this._playTone(523.25, 0.08, "triangle", 0, 0.2);
+      },
+
+      playWinFanfare() {
+        const fanfare = [440.0, 554.37, 659.25, 880.0, 1174.66];
+        fanfare.forEach((n, idx) => {
+          this._playTone(n, 0.22, "sawtooth", idx * 0.09, 0.25);
+          this._playTone(n / 2, 0.24, "triangle", idx * 0.09, 0.25);
+        });
+        this._playDrum(150, 0.3, 0.5, 0);
+        this._playDrum(150, 0.35, 0.55, 0.36);
+      },
+
+      playGameOver() {
+        const notes = [392.0, 349.23, 293.66, 220.0];
+        notes.forEach((n, idx) => {
+          this._playTone(n, 0.3, "sawtooth", idx * 0.15, 0.22);
+        });
+      },
+
+      // موسيقى فرعونية حماسية مختلفة لكل مستوى
+      playLevelMusic(levelId = "giza") {
+        this.stopMusic();
+        this.init();
+        this.beatCount = 0;
+
+        // مقام حجاز/شرقي حماسي مع قفزات أوكتاف
+        const tracks = {
+          giza: {
+            tempoMs: 210, // إيقاع سريع وحماسي
+            melody: [293.66, 311.13, 440.0, 466.16, 587.33, 466.16, 440.0, 311.13, 587.33, 622.25, 880.0, 587.33],
+            bass:   [146.83, 146.83, 220.0, 146.83, 155.56, 155.56, 220.0, 146.83]
+          },
+          luxor: {
+            tempoMs: 195, // إيقاع احتفالي أسرع لمعبد الكرنك والنيل
+            melody: [329.63, 349.23, 493.88, 523.25, 659.25, 783.99, 659.25, 523.25, 493.88, 349.23, 659.25, 987.77],
+            bass:   [164.81, 164.81, 246.94, 164.81, 174.61, 174.61, 246.94, 164.81]
+          }
+        };
+
+        const active = tracks[levelId] || tracks.giza;
+
+        const tick = () => {
+          if (!this.muted && this.volume > 0) {
+            const i = this.beatCount;
+            const note = active.melody[i % active.melody.length];
+            const bassNote = active.bass[i % active.bass.length];
+
+            // اللحن الرئيسي الحماسي
+            this._playTone(note, (active.tempoMs / 1000) * 1.1, "sawtooth", 0, 0.16);
+            this._playTone(note * 0.5, (active.tempoMs / 1000) * 1.2, "triangle", 0, 0.22);
+
+            // خط البيس المتحرك
+            if (i % 2 === 0) {
+              this._playTone(bassNote, 0.2, "triangle", 0, 0.24);
+            }
+
+            // إيقاع الطبول الفرعونية (ضربة قوية في بداية كل مازورة ونبضات متتابعة)
+            if (i % 4 === 0) {
+              this._playDrum(155, 0.22, 0.52, 0);
+            } else if (i % 4 === 2) {
+              this._playDrum(135, 0.16, 0.36, 0);
+            } else if (i % 2 === 1) {
+              this._playDrum(185, 0.08, 0.22, 0);
+            }
+
+            this.beatCount++;
+          }
+          this.musicTimer = setTimeout(tick, active.tempoMs);
+        };
+
+        tick();
+      },
+
+      stopMusic() {
+        if (this.musicTimer) {
+          clearTimeout(this.musicTimer);
+          this.musicTimer = null;
+        }
+      }
+    };
   </script>
 </body>
 </html>
