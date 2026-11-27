@@ -48,7 +48,6 @@
       flex-shrink: 0;
     }
 
-    /* شاشة التحميل المستوحاة من الصورة الأولى */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -194,7 +193,6 @@
       color: #4c2d07;
     }
 
-    /* الأزرار الملكية البارزة */
     .btn-royal {
       display: inline-flex;
       align-items: center;
@@ -272,7 +270,6 @@
       box-shadow: 0 2px 0 #04382f;
     }
 
-    /* الشريط العلوي */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -308,7 +305,18 @@
       font-weight: 900;
     }
 
-    /* الشاشات */
+    .pi-status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #9ca3af;
+      display: inline-block;
+    }
+    .pi-status-dot.connected {
+      background: #18c4a6;
+      box-shadow: 0 0 8px #18c4a6;
+    }
+
     .screen { display: none; }
     .screen.active { display: block; }
 
@@ -373,7 +381,6 @@
       text-align: center;
     }
 
-    /* ساحة لعب البازل */
     .game-stage {
       max-width: 820px;
       margin: 14px auto 28px;
@@ -433,7 +440,6 @@
       font-weight: 900;
     }
 
-    /* النوافذ المنبثقة */
     .modal {
       display: none;
       position: fixed;
@@ -553,7 +559,6 @@
       font-size: 0.82rem;
     }
 
-    /* عجلة الحظ */
     .wheel-wrap {
       position: relative;
       width: 236px;
@@ -610,7 +615,6 @@
       z-index: 5;
     }
 
-    /* صندوق الكنز */
     .treasure-card {
       margin: 12px 0;
       padding: 15px;
@@ -655,7 +659,6 @@
 </head>
 <body>
 
-  <!-- أيقونات SVG مشتركة -->
   <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
     <defs>
       <g id="svg-ankh" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -691,7 +694,6 @@
     </defs>
   </svg>
 
-  <!-- شاشة التحميل -->
   <div id="splash-screen">
     <svg class="splash-bg-art" viewBox="0 0 900 540" preserveAspectRatio="xMidYMid slice">
       <circle cx="760" cy="85" r="46" fill="#fff29c" opacity="0.9"/>
@@ -748,9 +750,9 @@
     </div>
   </div>
 
-  <!-- الشريط العلوي -->
   <header class="top-bar">
     <div class="hud-pill">
+      <span id="pi-status-dot" class="pi-status-dot"></span>
       <svg class="ui-icon"><use href="#svg-crown"/></svg>
       <span id="ui-username" data-i18n="explorerDefault">Explorer</span>
       <span>|</span>
@@ -771,12 +773,14 @@
         <span id="ui-coins">150</span>
       </div>
 
+      <button id="btn-pi-connect" type="button" class="btn-royal btn-teal" onclick="connectPiAccount()" data-i18n="connectPiBtn">
+        Connect Pi
+      </button>
       <button type="button" class="btn-royal" onclick="SoundEngine.playClick(); openAdminModal()" data-i18n="adminBtn">Admin</button>
       <button type="button" class="btn-royal" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">Settings</button>
     </div>
   </header>
 
-  <!-- الشاشة الرئيسية -->
   <main id="screen-home" class="screen active">
     <div class="home-layout">
       <aside class="panel-frame" style="display:flex; flex-direction:column; gap:10px;">
@@ -828,7 +832,6 @@
     </div>
   </main>
 
-  <!-- شاشة لعب البازل -->
   <section id="screen-game" class="screen">
     <div class="game-stage">
       <div class="game-top-controls">
@@ -864,7 +867,6 @@
     </div>
   </section>
 
-  <!-- عجلة الحظ -->
   <div id="modal-wheel" class="modal">
     <div class="modal-box" style="text-align:center;">
       <h3 class="panel-title" data-i18n="wheelModalTitle">Pharaonic Lucky Wheel</h3>
@@ -879,7 +881,6 @@
     </div>
   </div>
 
-  <!-- المتجر وصندوق الكنز -->
   <div id="modal-store" class="modal">
     <div class="modal-box">
       <h3 class="panel-title" data-i18n="storeTitle">MEHA Store</h3>
@@ -913,7 +914,10 @@
             <svg class="ui-icon" style="width:15px; height:15px;"><use href="#svg-coin"/></svg>
             <span data-i18n="perDayLimit">(3/day)</span>
           </p>
-          <button type="button" class="btn-royal" style="margin-top:8px;" onclick="buyStoreItem('hint', 100)" data-i18n="buyBtn">Buy</button>
+          <button type="button" class="btn-royal" style="margin-top:8px; width:100%;" onclick="buyStoreItem('hint', 100)" data-i18n="buyBtn">Buy</button>
+          <button type="button" class="btn-royal btn-gold" style="margin-top:6px; width:100%; font-size:0.82rem;" onclick="buyWithPi('hint', 0.1, 'MEHA Hint Pack')">
+            π 0.1
+          </button>
         </div>
 
         <div class="sub-card">
@@ -923,7 +927,10 @@
             <svg class="ui-icon" style="width:15px; height:15px;"><use href="#svg-coin"/></svg>
             <span data-i18n="perDayLimit">(3/day)</span>
           </p>
-          <button type="button" class="btn-royal" style="margin-top:8px;" onclick="buyStoreItem('view', 200)" data-i18n="buyBtn">Buy</button>
+          <button type="button" class="btn-royal" style="margin-top:8px; width:100%;" onclick="buyStoreItem('view', 200)" data-i18n="buyBtn">Buy</button>
+          <button type="button" class="btn-royal btn-gold" style="margin-top:6px; width:100%; font-size:0.82rem;" onclick="buyWithPi('view', 0.2, 'MEHA View 7s Pack')">
+            π 0.2
+          </button>
         </div>
       </div>
 
@@ -931,7 +938,6 @@
     </div>
   </div>
 
-  <!-- المتحف الشخصي -->
   <div id="modal-museum" class="modal">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -956,7 +962,6 @@
     </div>
   </div>
 
-  <!-- الإنجازات والألقاب -->
   <div id="modal-achievements" class="modal">
     <div class="modal-box">
       <h3 class="panel-title" data-i18n="achievementsTitle">Achievements & Titles</h3>
@@ -976,7 +981,6 @@
     </div>
   </div>
 
-  <!-- لوحة الإدارة -->
   <div id="modal-admin" class="modal">
     <div class="modal-box">
       <h3 class="panel-title" data-i18n="adminTitle">Admin Dashboard</h3>
@@ -995,10 +999,15 @@
     </div>
   </div>
 
-  <!-- الإعدادات -->
   <div id="modal-settings" class="modal">
     <div class="modal-box">
       <h3 class="panel-title" data-i18n="settingsTitle">Settings</h3>
+      <div style="margin:12px 0;">
+        <label style="display:flex; align-items:center; gap:8px; font-weight:700; cursor:pointer;">
+          <input type="checkbox" id="pi-sandbox-toggle" onchange="togglePiSandbox(this.checked)" />
+          <span>Pi Sandbox Mode (Testing)</span>
+        </label>
+      </div>
       <div style="margin:12px 0;">
         <label style="display:block; margin-bottom:6px; font-weight:700;" data-i18n="volumeLabel">Sound Effects Volume:</label>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
@@ -1016,7 +1025,6 @@
     </div>
   </div>
 
-  <!-- نافذة الفوز -->
   <div id="modal-win" class="modal">
     <div class="modal-box" style="text-align:center;">
       <h2 style="color:#ffe047; font-weight:900;" data-i18n="winTitle">Great Job! Puzzle Completed</h2>
@@ -1032,7 +1040,164 @@
   </div>
 
   <script>
-    /* رسم مشاهد فرعونية غنية داخل لوحة اللعب */
+    const PI_CONFIG = {
+      sandbox: true,
+      backendUrl: ""
+    };
+
+    const piSession = {
+      authenticated: false,
+      user: null,
+      accessToken: ""
+    };
+
+    function initPiSdk() {
+      const box = document.getElementById("pi-sandbox-toggle");
+      if (box) box.checked = Boolean(PI_CONFIG.sandbox);
+
+      if (window.Pi && typeof window.Pi.init === "function") {
+        try {
+          window.Pi.init({ version: "2.0", sandbox: Boolean(PI_CONFIG.sandbox) });
+        } catch (err) {
+          console.warn("Pi.init warning:", err);
+        }
+      }
+    }
+
+    function togglePiSandbox(enabled) {
+      PI_CONFIG.sandbox = Boolean(enabled);
+      initPiSdk();
+      SoundEngine.playClick();
+    }
+
+    async function handleIncompletePayment(payment) {
+      if (!payment || !payment.identifier) return;
+      if (PI_CONFIG.backendUrl) {
+        try {
+          await fetch(`${PI_CONFIG.backendUrl}/api/pi/complete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              paymentId: payment.identifier,
+              txid: payment.transaction ? payment.transaction.txid : null
+            })
+          });
+        } catch (err) {
+          console.warn("Incomplete payment backend sync error:", err);
+        }
+      }
+    }
+
+    async function connectPiAccount() {
+      SoundEngine.playClick();
+      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+        alert(state.lang === "ar"
+          ? "افتح اللعبة داخل Pi Browser للاتصال بحساب Pi."
+          : "Open the app inside Pi Browser to connect your Pi account.");
+        return;
+      }
+
+      try {
+        const auth = await window.Pi.authenticate(["username", "payments"], handleIncompletePayment);
+        piSession.authenticated = true;
+        piSession.user = auth.user || null;
+        piSession.accessToken = auth.accessToken || "";
+
+        if (auth.user && auth.user.username) {
+          state.username = auth.user.username;
+          saveState();
+        }
+
+        if (PI_CONFIG.backendUrl && piSession.accessToken) {
+          fetch(`${PI_CONFIG.backendUrl}/api/pi/verify-auth`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accessToken: piSession.accessToken, user: piSession.user })
+          }).catch(() => {});
+        }
+
+        updatePiUi();
+        updateTopUI();
+        SoundEngine.playWin();
+      } catch (err) {
+        SoundEngine.playError();
+        alert(state.lang === "ar" ? "تم إلغاء تسجيل الدخول أو تعذر الاتصال بـ Pi." : "Pi sign-in was cancelled or failed.");
+      }
+    }
+
+    function updatePiUi() {
+      const dot = document.getElementById("pi-status-dot");
+      const btn = document.getElementById("btn-pi-connect");
+      if (dot) dot.classList.toggle("connected", piSession.authenticated);
+      if (btn) {
+        btn.textContent = piSession.authenticated
+          ? `π @${piSession.user?.username || state.username}`
+          : (state.lang === "ar" ? "ربط Pi" : "Connect Pi");
+      }
+    }
+
+    function grantPurchasedItem(itemType) {
+      if (itemType === "hint") state.hints += 1;
+      if (itemType === "view") state.views += 1;
+      saveState();
+      updateTopUI();
+      SoundEngine.playSnap();
+    }
+
+    async function buyWithPi(itemType, amountPi, memoText) {
+      SoundEngine.playClick();
+      if (!window.Pi || typeof window.Pi.createPayment !== "function") {
+        alert(state.lang === "ar"
+          ? "الدفع بـ Pi متاح داخل Pi Browser بعد ربط حسابك."
+          : "Pi payments are available inside Pi Browser after signing in.");
+        return;
+      }
+
+      if (!piSession.authenticated) {
+        await connectPiAccount();
+        if (!piSession.authenticated) return;
+      }
+
+      window.Pi.createPayment(
+        {
+          amount: amountPi,
+          memo: memoText,
+          metadata: { itemType, game: "MEHA_PUZZLE" }
+        },
+        {
+          onReadyForServerApproval: async (paymentId) => {
+            if (!PI_CONFIG.backendUrl) return;
+            await fetch(`${PI_CONFIG.backendUrl}/api/pi/approve`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId })
+            });
+          },
+          onReadyForServerCompletion: async (paymentId, txid) => {
+            if (PI_CONFIG.backendUrl) {
+              const res = await fetch(`${PI_CONFIG.backendUrl}/api/pi/complete`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentId, txid, itemType })
+              });
+              if (!res.ok) {
+                SoundEngine.playError();
+                return;
+              }
+            }
+            grantPurchasedItem(itemType);
+          },
+          onCancel: () => {
+            SoundEngine.playError();
+          },
+          onError: () => {
+            SoundEngine.playError();
+            alert(state.lang === "ar" ? "حدث خطأ أثناء إتمام الدفع بـ Pi." : "Pi payment error occurred.");
+          }
+        }
+      );
+    }
+
     const sceneCanvas = document.createElement("canvas");
     sceneCanvas.width = 420;
     sceneCanvas.height = 420;
@@ -1111,7 +1276,6 @@
         sCtx.arc(210, 200, 155, 0, Math.PI * 2);
         sCtx.fill();
 
-        /* غطاء الرأس المخطط */
         sCtx.fillStyle = "#ffe047";
         sCtx.strokeStyle = "#9c6806";
         sCtx.lineWidth = 4;
@@ -1134,7 +1298,6 @@
           sCtx.stroke();
         });
 
-        /* الوجه الذهبي والعينان */
         sCtx.fillStyle = "#ffd13b";
         sCtx.beginPath();
         sCtx.ellipse(210, 215, 64, 88, 0, 0, Math.PI * 2);
@@ -1167,7 +1330,6 @@
         sCtx.arc(210, 272, 24, 0.25, Math.PI - 0.25);
         sCtx.stroke();
 
-        /* عقد فرعوني ملون */
         const cols = ["#e63946", "#18c4a6", "#ffd13b", "#3b82f6"];
         for (let i = 0; i < 8; i++) {
           sCtx.fillStyle = cols[i % cols.length];
@@ -1220,7 +1382,6 @@
         sCtx.fillStyle = nile;
         sCtx.fillRect(0, 235, 420, 185);
 
-        /* زهرة اللوتس الكبيرة */
         sCtx.fillStyle = "#2ecc71";
         sCtx.beginPath();
         sCtx.ellipse(210, 275, 78, 22, 0, 0, Math.PI * 2);
@@ -1250,7 +1411,6 @@
         sCtx.arc(210, 195, 155, 0, Math.PI * 2);
         sCtx.fill();
 
-        /* أعمدة المعبد */
         sCtx.fillStyle = "#c9963b";
         sCtx.fillRect(48, 110, 32, 260);
         sCtx.fillRect(340, 110, 32, 260);
@@ -1258,7 +1418,6 @@
         sCtx.fillRect(38, 96, 52, 18);
         sCtx.fillRect(330, 96, 52, 18);
 
-        /* رمز أنوبيس الذهبي والأسود */
         sCtx.fillStyle = "#182338";
         sCtx.strokeStyle = "#ffe047";
         sCtx.lineWidth = 4;
@@ -1298,7 +1457,6 @@
         sCtx.arc(105, 92, 44, 0, Math.PI * 2);
         sCtx.fill();
 
-        /* المسلة الفرعونية */
         sCtx.fillStyle = "#e5b04a";
         sCtx.strokeStyle = "#6e460e";
         sCtx.lineWidth = 4;
@@ -1333,7 +1491,6 @@
         sCtx.lineWidth = 4;
         sCtx.strokeRect(112, 102, 196, 216);
 
-        /* مفتاح الحياة عنخ مزخرف */
         sCtx.strokeStyle = "#d48c0a";
         sCtx.lineWidth = 8;
         sCtx.beginPath();
@@ -1513,6 +1670,7 @@
         en: {
           loading: "Opening the doors of the Pharaonic temple...",
           explorerDefault: "Explorer",
+          connectPiBtn: "Connect Pi",
           adminBtn: "Admin",
           settingsBtn: "Settings",
           profileTitle: "Profile",
@@ -1561,6 +1719,7 @@
         ar: {
           loading: "جاري فتح أبواب المعبد الفرعوني...",
           explorerDefault: "مستكشف",
+          connectPiBtn: "ربط Pi",
           adminBtn: "الإدارة",
           settingsBtn: "الإعدادات",
           profileTitle: "الملف الشخصي",
@@ -1609,6 +1768,7 @@
         fr: {
           loading: "Ouverture des portes du temple pharaonique...",
           explorerDefault: "Explorateur",
+          connectPiBtn: "Connecter Pi",
           adminBtn: "Admin",
           settingsBtn: "Paramètres",
           profileTitle: "Profil",
@@ -1657,6 +1817,7 @@
         zh: {
           loading: "正在开启法老神庙之门...",
           explorerDefault: "探险家",
+          connectPiBtn: "连接 Pi",
           adminBtn: "管理",
           settingsBtn: "设置",
           profileTitle: "个人档案",
@@ -1705,7 +1866,7 @@
       }
     };
 
-    const STORAGE_KEY = "meha_puzzle_save_v6";
+    const STORAGE_KEY = "meha_puzzle_save_v7";
     const todayKey = () => new Date().toISOString().slice(0, 10);
 
     function defaultState() {
@@ -1901,6 +2062,7 @@
       });
       const sel = document.getElementById("lang-select");
       if (sel) sel.value = lang;
+      updatePiUi();
     }
 
     function changeLang(newLang) {
@@ -2129,7 +2291,6 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      /* خلفية جانبية مصغرة للصورة المرجعية على اليمين واليسار */
       const sideThumb = 86;
       if (boardX - 24 >= sideThumb) {
         ctx.save();
@@ -2478,11 +2639,7 @@
       }
       state.coins -= cost;
       state.dailyBought[type] += 1;
-      if (type === "hint") state.hints += 1;
-      if (type === "view") state.views += 1;
-      saveState();
-      updateTopUI();
-      SoundEngine.playSnap();
+      grantPurchasedItem(type);
     }
 
     function openMuseumModal() {
@@ -2586,7 +2743,7 @@
         <div class="admin-box"><strong>Coins:</strong> ${state.coins}</div>
         <div class="admin-box"><strong>Completed:</strong> ${state.completedCount}</div>
         <div class="admin-box"><strong>Museum:</strong> ${state.unlockedArtifactIds.length}/${CONFIG.MUSEUM_ITEMS.length}</div>
-        <div class="admin-box"><strong>Daily Puzzle:</strong> ${state.dailyPuzzleDate || "No"}</div>
+        <div class="admin-box"><strong>Pi Auth:</strong> ${piSession.authenticated ? "Yes" : "No"}</div>
       `;
       openModal("modal-admin");
     }
@@ -2650,12 +2807,7 @@
       SoundEngine.playClick();
     }
 
-    if (window.Pi && typeof window.Pi.init === "function") {
-      try {
-        window.Pi.init({ version: "2.0" });
-      } catch (_) {}
-    }
-
+    initPiSdk();
     applyTranslations();
     updateTopUI();
     setInterval(updateLivesAndCountdown, 1000);
