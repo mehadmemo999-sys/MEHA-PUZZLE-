@@ -272,6 +272,7 @@
       font-size: 0.82rem;
     }
 
+    /* عجلة الحظ الدوارة */
     .wheel-stage {
       position: relative;
       width: 240px;
@@ -330,6 +331,7 @@
       z-index: 5;
     }
 
+    /* صندوق الكنز الفرعوني المزخرف */
     .pharaoh-chest-box {
       position: relative;
       background: linear-gradient(145deg, rgba(212, 175, 55, 0.16), rgba(7, 18, 43, 0.92));
@@ -403,11 +405,6 @@
 </head>
 <body>
 
-  <!-- عنصر الموسيقى الرئيسي المستمر بجودة عالية ونقاء -->
-  <audio id="ney-bgm-audio" preload="auto" loop playsinline>
-    <source src="Ancient Egyptian Flute Ney music(MP3_160K).mp3" type="audio/mpeg" />
-  </audio>
-
   <div id="splash-screen">
     <div class="puzzle-loader">
       <span></span><span></span><span></span><span></span>
@@ -425,7 +422,6 @@
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
       <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
       <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
-      <button id="quick-music-btn" class="stone-btn" onclick="SoundEngine.toggleMusic()">🪈 Ney: ON</button>
       <button class="stone-btn" onclick="SoundEngine.playClick(); openAdminModal()" data-i18n="adminBtn">🛡️ Admin</button>
       <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">⚙️ Settings</button>
     </div>
@@ -485,6 +481,7 @@
     </div>
   </section>
 
+  <!-- نافذة عجلة الحظ الدوارة -->
   <div id="modal-wheel" class="modal">
     <div class="modal-card" style="text-align:center;">
       <h3 data-i18n="wheelModalTitle">🎡 Pharaonic Lucky Wheel</h3>
@@ -499,6 +496,7 @@
     </div>
   </div>
 
+  <!-- نافذة المتجر مع صندوق الكنز الفرعوني -->
   <div id="modal-store" class="modal">
     <div class="modal-card">
       <h3 data-i18n="storeTitle">🛒 MEHA Store</h3>
@@ -605,12 +603,8 @@
     <div class="modal-card">
       <h3 data-i18n="settingsTitle">⚙️ Settings</h3>
       <div style="margin:12px 0;">
-        <label data-i18n="volumeLabel">🪈 Pharaonic Ney Music Volume:</label>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-          <button class="stone-btn" onclick="SoundEngine.startGlobalMusic()" data-i18n="playMusicBtn">▶️ Play Ney Music</button>
-          <button class="stone-btn" onclick="SoundEngine.stopMusic()" data-i18n="stopMusicBtn">⏹️ Stop Music</button>
-        </div>
+        <label data-i18n="volumeLabel">🔊 Sound Effects Volume:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
       </div>
       <div style="margin:12px 0;">
         <label data-i18n="langLabel">🌐 Language:</label>
@@ -817,7 +811,6 @@
     }
 
     const CONFIG = {
-      GLOBAL_MUSIC_SRC: "Ancient Egyptian Flute Ney music(MP3_160K).mp3",
       MAX_LIVES: 10,
       LIFE_REGEN_SEC: 240,
       DIFFS: {
@@ -896,7 +889,7 @@
           fact: {
             en: "This image highlights a lotus blossom above turquoise Nile waters and golden light, symbolizing rebirth and renewal in ancient Egypt.",
             ar: "تُبرز هذه الصورة زهرة اللوتس فوق مياه النيل الفيروزية والضوء الذهبي، رمز الانبعاث والتجدد في مصر القديمة.",
-            fr: "Cette image met en valeur une fleur de lotus au-dessus des eaux du Nil, symbole de renaissance.",
+            fr: "Cette image met en valeur une fleur de lotus au-dessus des eaux du Nil, symbole de renouveau.",
             zh: "该画面展现了尼罗河碧水与金光映衬下的莲花，象征着古埃及文化中的重生与更新。"
           }
         },
@@ -1008,9 +1001,7 @@
           ranksLadderTitle: "👑 MEHA LEGEND Rank Progression",
           adminTitle: "🛡️ Admin Dashboard",
           settingsTitle: "⚙️ Settings",
-          volumeLabel: "🪈 Pharaonic Ney Music Volume:",
-          playMusicBtn: "▶️ Play Ney Music",
-          stopMusicBtn: "⏹️ Stop Music",
+          volumeLabel: "🔊 Sound Effects Volume:",
           langLabel: "🌐 Language:",
           saveCloseBtn: "Save & Close",
           winTitle: "🎉 Great Job! Puzzle Completed",
@@ -1052,9 +1043,7 @@
           ranksLadderTitle: "👑 مسار رتبة أسطورة MEHA",
           adminTitle: "🛡️ لوحة الإدارة",
           settingsTitle: "⚙️ الإعدادات",
-          volumeLabel: "🪈 مستوى صوت موسيقى الناي الفرعوني:",
-          playMusicBtn: "▶️ تشغيل موسيقى الناي",
-          stopMusicBtn: "⏹️ إيقاف الموسيقى",
+          volumeLabel: "🔊 مستوى صوت المؤثرات:",
           langLabel: "🌐 اللغة:",
           saveCloseBtn: "حفظ وإغلاق",
           winTitle: "🎉 أحسنت! تم إكمال اللغز",
@@ -1096,9 +1085,7 @@
           ranksLadderTitle: "👑 Progression vers LÉGENDE MEHA",
           adminTitle: "🛡️ Tableau Admin",
           settingsTitle: "⚙️ Paramètres",
-          volumeLabel: "🪈 Volume Musique Ney Pharaonique :",
-          playMusicBtn: "▶️ Lancer Ney",
-          stopMusicBtn: "⏹️ Arrêter",
+          volumeLabel: "🔊 Volume des Effets :",
           langLabel: "🌐 Langue :",
           saveCloseBtn: "Enregistrer et Fermer",
           winTitle: "🎉 Bravo ! Puzzle Terminé",
@@ -1140,9 +1127,7 @@
           ranksLadderTitle: "👑 MEHA 传奇段位进阶",
           adminTitle: "🛡️ 管理后台",
           settingsTitle: "⚙️ 设置",
-          volumeLabel: "🪈 法老纳伊笛音乐量：",
-          playMusicBtn: "▶️ 播放笛乐",
-          stopMusicBtn: "⏹️ 停止音乐",
+          volumeLabel: "🔊 音效音量：",
           langLabel: "🌐 语言：",
           saveCloseBtn: "保存并关闭",
           winTitle: "🎉 太棒了！拼图完成",
@@ -1176,8 +1161,7 @@
         lastStoreBoxDate: null,
         lastChestRewardText: "",
         dailyBought: { date: todayKey(), hint: 0, view: 0 },
-        musicVolume: 0.8,
-        musicEnabled: true
+        sfxVolume: 0.8
       };
     }
 
@@ -1215,23 +1199,8 @@
       }
     }
 
-    // محرك الصوت والناي الفرعوني المستمر والنقي
     const SoundEngine = (() => {
-      let audioEl = null;
       let ctx = null;
-
-      function getAudio() {
-        if (!audioEl) {
-          audioEl = document.getElementById("ney-bgm-audio");
-          if (audioEl) {
-            audioEl.src = CONFIG.GLOBAL_MUSIC_SRC;
-            audioEl.loop = true;
-            audioEl.preload = "auto";
-            audioEl.volume = Number(state.musicVolume ?? 0.8);
-          }
-        }
-        return audioEl;
-      }
 
       function getCtx() {
         if (!ctx) {
@@ -1244,80 +1213,28 @@
         return ctx;
       }
 
-      function updateMusicButton() {
-        const btn = document.getElementById("quick-music-btn");
-        const el = getAudio();
-        if (!btn) return;
-        const playing = Boolean(el && !el.paused && !el.muted && state.musicEnabled);
-        btn.textContent = playing ? "🪈 Ney: ON" : "🔇 Ney: OFF";
-      }
-
-      async function startGlobalMusic() {
-        const el = getAudio();
-        if (!el) return;
-        state.musicEnabled = true;
-        el.muted = false;
-        el.volume = Number(state.musicVolume ?? 0.8);
-        saveState();
-        try {
-          await el.play();
-          updateMusicButton();
-        } catch (_) {
-          updateMusicButton();
-        }
-      }
-
-      function stopMusic() {
-        const el = getAudio();
-        state.musicEnabled = false;
-        saveState();
-        if (el) {
-          el.pause();
-        }
-        updateMusicButton();
-      }
-
-      async function toggleMusic() {
-        const el = getAudio();
-        if (!el) return;
-        if (!el.paused && state.musicEnabled) {
-          stopMusic();
-        } else {
-          await startGlobalMusic();
-          playClick();
-        }
-      }
-
-      function setVolume(val) {
-        const num = Math.max(0, Math.min(1, Number(val)));
-        state.musicVolume = num;
-        if (num > 0) state.musicEnabled = true;
-        const el = getAudio();
-        if (el) {
-          el.volume = num;
-          if (num > 0 && el.paused && state.musicEnabled) {
-            el.play().catch(() => {});
-          }
-        }
-        saveState();
-        updateMusicButton();
-      }
-
       function tone(freq, duration, type = "triangle", gainPeak = 0.08, delay = 0) {
         const c = getCtx();
         if (!c) return;
+        const volScale = Number(state.sfxVolume ?? 0.8);
+        if (volScale <= 0) return;
         const now = c.currentTime + delay;
         const osc = c.createOscillator();
         const gain = c.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, now);
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(gainPeak, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, gainPeak * volScale), now + 0.015);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
         osc.connect(gain);
         gain.connect(c.destination);
         osc.start(now);
         osc.stop(now + duration + 0.02);
+      }
+
+      function setVolume(val) {
+        state.sfxVolume = Math.max(0, Math.min(1, Number(val)));
+        saveState();
       }
 
       function playClick() { tone(520, 0.07, "triangle", 0.06); }
@@ -1331,12 +1248,7 @@
       }
 
       return {
-        getAudio,
-        startGlobalMusic,
-        stopMusic,
-        toggleMusic,
         setVolume,
-        updateMusicButton,
         playClick,
         playSnap,
         playRotate,
@@ -1344,36 +1256,6 @@
         playWin
       };
     })();
-
-    // ضمان تشغيل الموسيقى تلقائياً عند أول تفاعل أو عند التحميل إذا أتاح المتصفح ذلك
-    window.addEventListener("DOMContentLoaded", () => {
-      const slider = document.getElementById("volume-slider");
-      if (slider) slider.value = String(state.musicVolume ?? 0.8);
-      if (state.musicEnabled) {
-        SoundEngine.startGlobalMusic();
-      } else {
-        SoundEngine.updateMusicButton();
-      }
-    });
-
-    ["pointerdown", "keydown", "touchstart"].forEach(ev => {
-      document.addEventListener(ev, () => {
-        if (state.musicEnabled) {
-          const el = SoundEngine.getAudio();
-          if (el && el.paused) {
-            SoundEngine.startGlobalMusic();
-          }
-        }
-      }, { passive: true });
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && state.musicEnabled) {
-        const el = SoundEngine.getAudio();
-        if (el && el.paused) el.play().catch(() => {});
-      }
-      SoundEngine.updateMusicButton();
-    });
 
     function getRankObj(xp = state.xp) {
       let current = CONFIG.RANKS[0];
@@ -1451,7 +1333,6 @@
       document.getElementById("ui-next-rank").textContent = getNextRankInfo();
       document.getElementById("ui-hints").textContent = state.hints;
       document.getElementById("ui-views").textContent = state.views;
-      SoundEngine.updateMusicButton();
     }
 
     function openModal(id) { document.getElementById(id).classList.add("open"); }
