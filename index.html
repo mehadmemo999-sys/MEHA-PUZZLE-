@@ -34,7 +34,14 @@
       min-height: 100vh;
     }
 
-    /* شاشة التحميل المستوحاة من التصميم الفرعوني المشرق */
+    .ui-svg-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: -3px;
+      flex-shrink: 0;
+    }
+
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -45,57 +52,24 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 28px 18px 0;
+      padding: 24px 18px 0;
       z-index: 9999;
       transition: opacity 0.6s ease;
       overflow: hidden;
     }
 
-    .splash-scenery {
+    .splash-scenery-svg {
       position: absolute;
       inset: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      overflow: hidden;
-    }
-
-    .splash-pyramid-left {
-      position: absolute;
-      left: -30px;
-      bottom: 84px;
-      width: 0;
-      height: 0;
-      border-left: 115px solid transparent;
-      border-right: 115px solid transparent;
-      border-bottom: 155px solid rgba(214, 155, 52, 0.55);
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.2));
-    }
-
-    .splash-pyramid-right {
-      position: absolute;
-      right: -20px;
-      bottom: 84px;
-      width: 0;
-      height: 0;
-      border-left: 135px solid transparent;
-      border-right: 135px solid transparent;
-      border-bottom: 180px solid rgba(196, 136, 38, 0.6);
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.22));
-    }
-
-    .splash-nile-band {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 72px;
-      height: 44px;
-      background: linear-gradient(90deg, #1982d1, #27b3c4, #1b88d6);
-      opacity: 0.75;
     }
 
     .splash-hero-box {
       position: relative;
       z-index: 2;
-      margin-top: 12px;
+      margin-top: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -141,9 +115,9 @@
     }
 
     .splash-title {
-      font-size: 2.15rem;
+      font-size: 2.1rem;
       font-weight: 900;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       background: linear-gradient(180deg, #fff39e 0%, #ffd226 52%, #c98308 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -153,7 +127,7 @@
     .splash-subtitle {
       color: #ffffff;
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.98rem;
       letter-spacing: 2px;
       text-shadow: 0 2px 6px rgba(7, 18, 43, 0.85);
       margin-top: 2px;
@@ -209,14 +183,15 @@
       padding: 6px 10px;
       display: flex;
       justify-content: center;
-      gap: 12px;
-      font-size: 1.15rem;
-      color: #4f2f08;
-      font-weight: bold;
+      gap: 14px;
+      align-items: center;
     }
 
-    /* الأزرار بطابع فرعوني ملكي بارز */
     .stone-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       background: linear-gradient(180deg, #7c3aed 0%, #4c1d95 62%, #32106b 100%);
       border: 2.5px solid var(--bright-gold);
       color: #fff6b8;
@@ -288,6 +263,9 @@
     }
 
     .badge-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       background: linear-gradient(180deg, rgba(255, 216, 61, 0.2), rgba(13, 33, 73, 0.85));
       border: 2px solid var(--ancient-gold);
       padding: 6px 13px;
@@ -295,6 +273,16 @@
       font-size: 0.9rem;
       font-weight: 700;
       box-shadow: inset 0 1px 0 rgba(255, 245, 180, 0.35);
+    }
+
+    .life-timer-chip {
+      background: rgba(24, 196, 166, 0.18);
+      border: 1px solid var(--turquoise);
+      color: #7df9e4;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
     }
 
     .temple-backdrop {
@@ -333,7 +321,17 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: 16px;
+      gap: 14px;
+    }
+
+    .sanctuary-art-banner {
+      width: 100%;
+      max-width: 440px;
+      border-radius: 16px;
+      border: 2.5px solid var(--bright-gold);
+      overflow: hidden;
+      background: linear-gradient(180deg, #2578de, #13418f 62%, #d8a343 63%, #b57e22 100%);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
     }
 
     .screen { display: none; }
@@ -361,6 +359,18 @@
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
+    }
+
+    .peek-status-badge {
+      background: rgba(24, 196, 166, 0.22);
+      border: 2px solid var(--turquoise);
+      color: #ffd83d;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      display: none;
     }
 
     .modal {
@@ -483,7 +493,6 @@
       font-size: 0.82rem;
     }
 
-    /* عجلة الحظ الدوارة */
     .wheel-stage {
       position: relative;
       width: 240px;
@@ -542,7 +551,6 @@
       z-index: 5;
     }
 
-    /* صندوق الكنز الفرعوني المزخرف */
     .pharaoh-chest-box {
       position: relative;
       background: linear-gradient(145deg, rgba(255, 216, 61, 0.18), rgba(14, 34, 82, 0.95));
@@ -552,16 +560,6 @@
       margin: 12px 0;
       text-align: center;
       overflow: hidden;
-    }
-
-    .chest-glyphs-row {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      font-size: 1.35rem;
-      color: var(--bright-gold);
-      margin-bottom: 6px;
-      letter-spacing: 3px;
     }
 
     .pharaoh-chest-visual {
@@ -616,12 +614,50 @@
 </head>
 <body>
 
+  <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
+    <defs>
+      <g id="icon-ankh" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="12" cy="7" rx="4" ry="4.5"/>
+        <path d="M12 11.5V21"/>
+        <path d="M7 14.5H17"/>
+      </g>
+      <g id="icon-eye" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2.5 12C5.2 7.5 8.5 6 12 6C15.5 6 18.8 7.5 21.5 12C18.8 16.5 15.5 18 12 18C8.5 18 5.2 16.5 2.5 12Z"/>
+        <circle cx="12" cy="12" r="2.6" fill="currentColor"/>
+        <path d="M16.5 15.5L15 19.5"/>
+      </g>
+      <g id="icon-pyramid" fill="currentColor">
+        <polygon points="12,4 3,20 21,20" fill-opacity="0.35" stroke="currentColor" stroke-width="2"/>
+        <line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" stroke-width="1.6"/>
+      </g>
+      <g id="icon-lotus" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 18C9 18 7 14 12 7C17 14 15 18 12 18Z" fill="currentColor" fill-opacity="0.25"/>
+        <path d="M12 18C8 18 4.5 15.5 4.5 11.5C8 12 10.5 14.5 12 18Z"/>
+        <path d="M12 18C16 18 19.5 15.5 19.5 11.5C16 12 13.5 14.5 12 18Z"/>
+        <path d="M5 20H19"/>
+      </g>
+      <g id="icon-coin">
+        <circle cx="12" cy="12" r="9" fill="#ffd83d" stroke="#8a5600" stroke-width="2"/>
+        <circle cx="12" cy="12" r="6" fill="none" stroke="#b87904" stroke-width="1.4"/>
+      </g>
+      <g id="icon-heart">
+        <path d="M12 20.5L4.5 13C2.5 11 2.5 7.5 4.8 5.6C7 3.8 10.2 4.3 12 6.8C13.8 4.3 17 3.8 19.2 5.6C21.5 7.5 21.5 11 19.5 13L12 20.5Z" fill="#ff4d6d" stroke="#9e112b" stroke-width="1.6"/>
+      </g>
+      <g id="icon-crown">
+        <path d="M4 18L2.5 8L8.5 12.5L12 6L15.5 12.5L21.5 8L20 18H4Z" fill="#ffd83d" stroke="#8a5600" stroke-width="1.8" stroke-linejoin="round"/>
+      </g>
+    </defs>
+  </svg>
+
   <div id="splash-screen">
-    <div class="splash-scenery">
-      <div class="splash-pyramid-left"></div>
-      <div class="splash-pyramid-right"></div>
-      <div class="splash-nile-band"></div>
-    </div>
+    <svg class="splash-scenery-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+      <circle cx="650" cy="85" r="42" fill="#fff08a" opacity="0.85"/>
+      <polygon points="90,375 -35,375 28,235" fill="#d99b38" opacity="0.72"/>
+      <polygon points="735,375 565,375 650,205" fill="#c78828" opacity="0.78"/>
+      <path d="M190,375 L275,220 L360,375 Z" fill="#e5ac47" opacity="0.65"/>
+      <rect x="0" y="362" width="800" height="44" fill="#1b88d6" opacity="0.82"/>
+      <rect x="0" y="402" width="800" height="98" fill="#dfb053" opacity="0.9"/>
+    </svg>
 
     <div class="splash-hero-box">
       <div class="puzzle-loader">
@@ -640,33 +676,52 @@
       <div class="splash-progress-frame">
         <div class="splash-progress-fill"></div>
       </div>
-      <div class="splash-loading-text">🪷 Loading... 🪷</div>
-      <div class="hiero-frieze">
-        <span>𓅓</span><span>𓊪</span><span>𓂀</span><span>𓏏</span><span>☥</span><span>𓅱</span><span>𓊹</span><span>𓆼</span><span>𓇳</span><span>☥</span>
+      <div class="splash-loading-text" style="display:flex; align-items:center; gap:6px;">
+        <svg class="ui-svg-icon" style="color:#b81d68;"><use href="#icon-lotus"/></svg>
+        <span>Loading...</span>
+        <svg class="ui-svg-icon" style="color:#b81d68;"><use href="#icon-lotus"/></svg>
+      </div>
+      <div class="hiero-frieze" style="color:#4f2f08;">
+        <svg class="ui-svg-icon"><use href="#icon-ankh"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-pyramid"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-eye"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-lotus"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-ankh"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-pyramid"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-eye"/></svg>
+        <svg class="ui-svg-icon"><use href="#icon-lotus"/></svg>
       </div>
     </div>
   </div>
 
   <header class="top-bar">
     <div class="badge-box">
-      👑 <span id="ui-username" data-i18n="explorerDefault">Explorer</span> |
-      <span id="ui-rank">🏺 Novice Explorer</span> |
-      <span id="ui-active-title" style="color:#38efcf;">🏷️ Explorer</span>
+      <svg class="ui-svg-icon"><use href="#icon-crown"/></svg>
+      <span id="ui-username" data-i18n="explorerDefault">Explorer</span> |
+      <span id="ui-rank">Novice Explorer</span> |
+      <span id="ui-active-title" style="color:#38efcf;">Explorer</span>
     </div>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <div class="badge-box">❤️ <span id="ui-lives">10</span>/10</div>
-      <div class="badge-box">🪙 <span id="ui-coins">150</span></div>
-      <button class="stone-btn" onclick="SoundEngine.playClick(); openAdminModal()" data-i18n="adminBtn">🛡️ Admin</button>
-      <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">⚙️ Settings</button>
+      <div class="badge-box">
+        <svg class="ui-svg-icon"><use href="#icon-heart"/></svg>
+        <span id="ui-lives">10</span>/10
+        <span id="ui-life-countdown" class="life-timer-chip" style="display:none;">04:00</span>
+      </div>
+      <div class="badge-box">
+        <svg class="ui-svg-icon"><use href="#icon-coin"/></svg>
+        <span id="ui-coins">150</span>
+      </div>
+      <button class="stone-btn" onclick="SoundEngine.playClick(); openAdminModal()" data-i18n="adminBtn">Admin</button>
+      <button class="stone-btn" onclick="SoundEngine.playClick(); openModal('modal-settings')" data-i18n="settingsBtn">Settings</button>
     </div>
   </header>
 
   <main id="screen-home" class="screen active">
     <div class="temple-backdrop">
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
-        <h3 data-i18n="profileTitle">🏛️ Profile</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openMuseumModal()" data-i18n="museumBtn">🏺 Museum</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openAchievementsModal()" data-i18n="achievementsBtn">🏅 Achievements</button>
+        <h3 data-i18n="profileTitle">Profile</h3>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openMuseumModal()" data-i18n="museumBtn">Museum</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openAchievementsModal()" data-i18n="achievementsBtn">Achievements</button>
         <div class="item-card">
           <small data-i18n="xpLabel">Experience XP</small>
           <div id="ui-xp" style="font-weight:bold; color:#ffd83d;">0 XP</div>
@@ -675,24 +730,37 @@
       </aside>
 
       <section class="center-sanctuary">
-        <div class="splash-emblem-banner" style="padding:10px 28px;">
-          <h2 class="splash-title" style="font-size:1.9rem;" data-i18n="homeTitle">Temples, Pyramids & The Nile</h2>
+        <div class="sanctuary-art-banner">
+          <svg viewBox="0 0 440 120" style="width:100%; height:112px; display:block;">
+            <circle cx="375" cy="30" r="18" fill="#ffe46b"/>
+            <polygon points="75,76 -10,76 32,26" fill="#e5ab46" stroke="#8f5d14" stroke-width="2"/>
+            <polygon points="155,76 55,76 105,18" fill="#f0be5b" stroke="#8f5d14" stroke-width="2"/>
+            <path d="M220,76 L265,30 L310,76 Z" fill="#d99a34" stroke="#8f5d14" stroke-width="2"/>
+            <rect x="0" y="75" width="440" height="16" fill="#1da1e2"/>
+            <path d="M20,86 Q55,74 90,86 T160,86 T230,86 T300,86 T370,86 T430,86" fill="none" stroke="#fff3a1" stroke-width="2" opacity="0.65"/>
+            <circle cx="52" cy="74" r="7" fill="#ff7eb6"/>
+            <circle cx="388" cy="74" r="7" fill="#ff7eb6"/>
+          </svg>
+        </div>
+
+        <div class="splash-emblem-banner" style="padding:8px 24px;">
+          <h2 class="splash-title" style="font-size:1.75rem;" data-i18n="homeTitle">Temples, Pyramids & The Nile</h2>
         </div>
         <p style="font-weight:600;" data-i18n="homeSubtitle">Difficulty and puzzle scenes are chosen randomly every round</p>
 
-        <button class="stone-btn gold-cta-btn" style="font-size:1.08rem; padding:14px 26px;" onclick="SoundEngine.playClick(); startRandomLevel()" data-i18n="randomPlayBtn">
-          🎲 Play Random Stage (Auto Difficulty & New Scene)
+        <button class="stone-btn gold-cta-btn" style="font-size:1.05rem; padding:14px 24px;" onclick="SoundEngine.playClick(); startRandomLevel()" data-i18n="randomPlayBtn">
+          Play Random Stage (Auto Difficulty & New Scene)
         </button>
 
         <button class="stone-btn" style="background:linear-gradient(180deg,#18c4a6 0%,#0c7d69 65%,#075245 100%); box-shadow:0 5px 0 #04362d, 0 8px 16px rgba(0,0,0,0.45), inset 0 2px 0 rgba(210,255,245,0.5);" onclick="SoundEngine.playClick(); startDailyPuzzle()" data-i18n="dailyBtn">
-          🗺️ Daily Puzzle: Lost Treasure (Once/Day)
+          Daily Puzzle: Lost Treasure (Once/Day)
         </button>
       </section>
 
       <aside class="side-panel" style="display:flex; flex-direction:column; gap:10px;">
-        <h3 data-i18n="rewardsTitle">🎡 Lucky Wheel & Store</h3>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openWheelModal()" data-i18n="wheelBtn">🎡 Lucky Wheel (Once/Day)</button>
-        <button class="stone-btn" onclick="SoundEngine.playClick(); openStoreModal()" data-i18n="storeBtn">🛒 Store</button>
+        <h3 data-i18n="rewardsTitle">Lucky Wheel & Store</h3>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openWheelModal()" data-i18n="wheelBtn">Lucky Wheel (Once/Day)</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); openStoreModal()" data-i18n="storeBtn">Store</button>
       </aside>
     </div>
   </main>
@@ -700,9 +768,9 @@
   <section id="screen-game" class="screen">
     <div id="puzzle-workspace">
       <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center;">
-        <button class="stone-btn" onclick="SoundEngine.playClick(); exitToHome()" data-i18n="exitBtn">🔙 Exit</button>
+        <button class="stone-btn" onclick="SoundEngine.playClick(); exitToHome()" data-i18n="exitBtn">Exit</button>
         <h3 id="game-level-title" style="color:#ffd83d;">Level</h3>
-        <div class="badge-box" style="border-color:#38efcf; color:#38efcf;" id="game-diff-badge">🎲 Mode</div>
+        <div class="badge-box" style="border-color:#38efcf; color:#38efcf;" id="game-diff-badge">Mode</div>
         <div class="badge-box" style="color:#ffd83d;">⏳ <span id="game-timer">02:00</span></div>
         <button class="stone-btn" onclick="SoundEngine.playClick(); zoomCanvas(0.1)">➕</button>
         <button class="stone-btn" onclick="SoundEngine.playClick(); zoomCanvas(-0.1)">➖</button>
@@ -711,63 +779,78 @@
       <canvas id="puzzle-canvas" width="700" height="420"></canvas>
 
       <div class="controls-bar">
-        <button class="stone-btn gold-cta-btn" onclick="handleUseHint()">💡 Hint (<span id="ui-hints">3</span>)</button>
-        <button class="stone-btn" onclick="handleUseView()">👁️ View 7s (<span id="ui-views">3</span>)</button>
+        <button type="button" class="stone-btn gold-cta-btn" onclick="handleUseHint()">
+          <span data-i18n="hintBtnLabel">Hint</span> (<span id="ui-hints">3</span>)
+        </button>
+        <button type="button" class="stone-btn" onclick="handleUseView()">
+          <span data-i18n="viewBtnLabel">View 7s</span> (<span id="ui-views">3</span>)
+        </button>
+        <div id="peek-countdown-badge" class="peek-status-badge">
+          👁️ <span id="peek-seconds-left">7</span>s
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- نافذة عجلة الحظ الدوارة -->
   <div id="modal-wheel" class="modal">
     <div class="modal-card" style="text-align:center;">
-      <h3 style="color:#ffd83d;" data-i18n="wheelModalTitle">🎡 Pharaonic Lucky Wheel</h3>
+      <h3 style="color:#ffd83d;" data-i18n="wheelModalTitle">Pharaonic Lucky Wheel</h3>
       <div class="wheel-stage">
         <div class="wheel-pointer"></div>
         <div id="lucky-wheel-disc" class="lucky-wheel"></div>
         <div class="wheel-center-cap">MEHA</div>
       </div>
       <div id="wheel-result-text" style="min-height:28px; color:#38efcf; font-weight:bold; margin-bottom:10px;"></div>
-      <button id="btn-spin-wheel" class="stone-btn gold-cta-btn" onclick="spinLuckyWheel()" data-i18n="spinNowBtn">🎡 Spin Now</button>
+      <button id="btn-spin-wheel" class="stone-btn gold-cta-btn" onclick="spinLuckyWheel()" data-i18n="spinNowBtn">Spin Now</button>
       <button class="stone-btn" style="margin-top:12px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-wheel')" data-i18n="closeBtn">Close</button>
     </div>
   </div>
 
-  <!-- نافذة المتجر مع صندوق الكنز الفرعوني -->
   <div id="modal-store" class="modal">
     <div class="modal-card">
-      <h3 style="color:#ffd83d;" data-i18n="storeTitle">🛒 MEHA Store</h3>
+      <h3 style="color:#ffd83d;" data-i18n="storeTitle">MEHA Store</h3>
 
       <div class="pharaoh-chest-box">
-        <div class="chest-glyphs-row">
-          <span>𓂀</span>
-          <span>☥</span>
-          <span>👑</span>
+        <div style="display:flex; justify-content:center; gap:14px; color:#ffd83d; margin-bottom:6px;">
+          <svg class="ui-svg-icon"><use href="#icon-eye"/></svg>
+          <svg class="ui-svg-icon"><use href="#icon-ankh"/></svg>
+          <svg class="ui-svg-icon"><use href="#icon-crown"/></svg>
         </div>
-        <h4 style="color:#ffd83d;" data-i18n="dailyBoxTitle">🎁 Pharaonic Treasure Box</h4>
+        <h4 style="color:#ffd83d;" data-i18n="dailyBoxTitle">Pharaonic Treasure Box</h4>
         <p style="font-size:0.86rem;" data-i18n="dailyBoxDesc">Random coins (50 - 200) + Hint or View</p>
 
         <div id="pharaoh-chest-visual" class="pharaoh-chest-visual">
-          <div style="font-size:1.4rem;">🏺✨</div>
-          <div class="chest-lock-emblem">☥</div>
+          <div style="font-size:1.35rem;">🏺✨</div>
+          <div class="chest-lock-emblem" style="display:inline-flex; align-items:center; gap:4px;">
+            <svg class="ui-svg-icon" style="width:15px; height:15px;"><use href="#icon-ankh"/></svg>
+          </div>
         </div>
 
         <div id="chest-reward-pop" class="chest-reward-pop"></div>
 
         <button id="btn-open-chest" class="stone-btn gold-cta-btn" style="margin-top:8px;" onclick="claimDailyStoreBox()" data-i18n="openBoxBtn">
-          🔓 Unlock Pharaonic Treasure
+          Unlock Pharaonic Treasure
         </button>
       </div>
 
       <div class="grid-cards">
         <div class="item-card">
-          <h4>💡 Hint</h4>
-          <p>100 Coin (3/day)</p>
-          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('hint', 100)" data-i18n="buyBtn">Buy</button>
+          <h4 data-i18n="hintItemTitle">Hint</h4>
+          <p style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+            <span>100</span>
+            <svg class="ui-svg-icon" style="width:15px; height:15px;"><use href="#icon-coin"/></svg>
+            <span data-i18n="perDayLimit">(3/day)</span>
+          </p>
+          <button class="stone-btn" style="margin-top:8px;" onclick="buyStoreItem('hint', 100)" data-i18n="buyBtn">Buy</button>
         </div>
         <div class="item-card">
-          <h4>👁️ View</h4>
-          <p>200 Coin (3/day)</p>
-          <button class="stone-btn" style="margin-top:6px;" onclick="buyStoreItem('view', 200)" data-i18n="buyBtn">Buy</button>
+          <h4 data-i18n="viewItemTitle">View</h4>
+          <p style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+            <span>200</span>
+            <svg class="ui-svg-icon" style="width:15px; height:15px;"><use href="#icon-coin"/></svg>
+            <span data-i18n="perDayLimit">(3/day)</span>
+          </p>
+          <button class="stone-btn" style="margin-top:8px;" onclick="buyStoreItem('view', 200)" data-i18n="buyBtn">Buy</button>
         </div>
       </div>
       <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-store')" data-i18n="closeBtn">Close</button>
@@ -777,7 +860,7 @@
   <div id="modal-museum" class="modal">
     <div class="modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-        <h3 style="color:#ffd83d;" data-i18n="museumTitle">🏺 Personal Museum</h3>
+        <h3 style="color:#ffd83d;" data-i18n="museumTitle">Personal Museum</h3>
         <div class="badge-box" style="color:#ffd83d;">
           <span data-i18n="museumCollectedLabel">Collected:</span> <span id="museum-count">0 / 6</span>
         </div>
@@ -800,16 +883,16 @@
 
   <div id="modal-achievements" class="modal">
     <div class="modal-card">
-      <h3 style="color:#ffd83d;" data-i18n="achievementsTitle">🏅 Achievements & Titles</h3>
+      <h3 style="color:#ffd83d;" data-i18n="achievementsTitle">Achievements & Titles</h3>
       <div id="achievements-grid" class="grid-cards"></div>
 
       <div style="margin-top:14px;">
-        <h4 style="color:#ffd83d;" data-i18n="titlesSectionTitle">🏷️ Equip Title</h4>
+        <h4 style="color:#ffd83d;" data-i18n="titlesSectionTitle">Equip Title</h4>
         <div id="titles-list" style="margin-top:6px;"></div>
       </div>
 
       <div style="margin-top:14px;">
-        <h4 style="color:#38efcf;" data-i18n="ranksLadderTitle">👑 MEHA LEGEND Rank Progression</h4>
+        <h4 style="color:#38efcf;" data-i18n="ranksLadderTitle">MEHA LEGEND Rank Progression</h4>
         <div id="ranks-ladder" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;"></div>
       </div>
 
@@ -819,16 +902,16 @@
 
   <div id="modal-admin" class="modal">
     <div class="modal-card">
-      <h3 style="color:#ffd83d;" data-i18n="adminTitle">🛡️ Admin Dashboard</h3>
+      <h3 style="color:#ffd83d;" data-i18n="adminTitle">Admin Dashboard</h3>
       <div id="admin-stats" class="admin-grid"></div>
 
       <div class="admin-grid" style="margin-top:12px;">
-        <button class="stone-btn" onclick="adminAddResources(500, 300)">🪙 +500 / ✨ +300 XP</button>
-        <button class="stone-btn gold-cta-btn" onclick="adminSetLegendRank()">👑 Unlock MEHA LEGEND</button>
-        <button class="stone-btn" onclick="adminRefillLivesAndTools()">❤️ Refill Lives & Tools</button>
-        <button class="stone-btn" onclick="adminUnlockAllMuseum()">🏺 Unlock All Museum</button>
-        <button class="stone-btn" onclick="adminResetDailyLimits()">🔄 Reset Daily Limits</button>
-        <button class="stone-btn" style="border-color:#ff7b7b; color:#ffd6d6;" onclick="adminWipeAllData()">🗑️ Reset All Save</button>
+        <button class="stone-btn" onclick="adminAddResources(500, 300)">+500 Coins / +300 XP</button>
+        <button class="stone-btn gold-cta-btn" onclick="adminSetLegendRank()">Unlock MEHA LEGEND</button>
+        <button class="stone-btn" onclick="adminRefillLivesAndTools()">Refill Lives & Tools</button>
+        <button class="stone-btn" onclick="adminUnlockAllMuseum()">Unlock All Museum</button>
+        <button class="stone-btn" onclick="adminResetDailyLimits()">Reset Daily Limits</button>
+        <button class="stone-btn" style="border-color:#ff7b7b; color:#ffd6d6;" onclick="adminWipeAllData()">Reset All Save</button>
       </div>
 
       <button class="stone-btn" style="margin-top:14px; width:100%;" onclick="SoundEngine.playClick(); closeModal('modal-admin')" data-i18n="closeBtn">Close</button>
@@ -837,13 +920,13 @@
 
   <div id="modal-settings" class="modal">
     <div class="modal-card">
-      <h3 style="color:#ffd83d;" data-i18n="settingsTitle">⚙️ Settings</h3>
+      <h3 style="color:#ffd83d;" data-i18n="settingsTitle">Settings</h3>
       <div style="margin:12px 0;">
-        <label data-i18n="volumeLabel">🔊 Sound Effects Volume:</label>
+        <label data-i18n="volumeLabel">Sound Effects Volume:</label>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" style="width:100%;" oninput="SoundEngine.setVolume(this.value)" />
       </div>
       <div style="margin:12px 0;">
-        <label data-i18n="langLabel">🌐 Language:</label>
+        <label data-i18n="langLabel">Language:</label>
         <select id="lang-select" class="stone-btn" style="width:100%;" onchange="changeLang(this.value)">
           <option value="en">English</option>
           <option value="ar">العربية</option>
@@ -857,12 +940,12 @@
 
   <div id="modal-win" class="modal">
     <div class="modal-card" style="text-align:center;">
-      <h2 style="color:#ffd83d;" data-i18n="winTitle">🎉 Great Job! Puzzle Completed</h2>
+      <h2 style="color:#ffd83d;" data-i18n="winTitle">Great Job! Puzzle Completed</h2>
       <img id="win-scene-img" src="" alt="" style="width:160px; height:110px; object-fit:cover; border-radius:12px; border:3px solid var(--bright-gold); margin-top:8px;" />
       <h4 id="win-scene-title" style="color:#38efcf; margin-top:6px;"></h4>
       <p id="win-rewards" style="margin:10px 0; font-weight:bold;"></p>
       <div class="item-card" style="text-align:start;">
-        <h4 data-i18n="factTitle">📜 Fact Matching This Exact Image:</h4>
+        <h4 data-i18n="factTitle">Fact Matching This Exact Image:</h4>
         <p id="win-fact" style="margin-top:6px; line-height:1.6;"></p>
       </div>
       <button class="stone-btn gold-cta-btn" style="margin-top:14px;" onclick="closeWin()" data-i18n="continueBtn">Continue</button>
@@ -1050,17 +1133,17 @@
       MAX_LIVES: 10,
       LIFE_REGEN_SEC: 240,
       DIFFS: {
-        easy:   { label: { en: "🟢 Easy", ar: "🟢 سهل", fr: "🟢 Facile", zh: "🟢 简单" }, rows: 3, cols: 3, timeSec: 120, coins: 20, xp: 30, rotate: false, artifact: false },
-        medium: { label: { en: "🟡 Medium", ar: "🟡 متوسط", fr: "🟡 Moyen", zh: "🟡 中等" }, rows: 4, cols: 4, timeSec: 210, coins: 30, xp: 60, rotate: false, artifact: false },
-        hard:   { label: { en: "🔴 Hard", ar: "🔴 صعب", fr: "🔴 Difficile", zh: "🔴 困难" }, rows: 5, cols: 5, timeSec: 300, coins: 50, xp: 120, rotate: true, artifact: true }
+        easy:   { label: { en: "Easy", ar: "سهل", fr: "Facile", zh: "简单" }, rows: 3, cols: 3, timeSec: 120, coins: 20, xp: 30, rotate: false, artifact: false },
+        medium: { label: { en: "Medium", ar: "متوسط", fr: "Moyen", zh: "中等" }, rows: 4, cols: 4, timeSec: 210, coins: 30, xp: 60, rotate: false, artifact: false },
+        hard:   { label: { en: "Hard", ar: "صعب", fr: "Difficile", zh: "困难" }, rows: 5, cols: 5, timeSec: 300, coins: 50, xp: 120, rotate: true, artifact: true }
       },
       RANKS: [
-        { minXp: 0,    en: "🏺 Novice Explorer", ar: "🏺 المستكشف المبتدئ", fr: "🏺 Explorateur Débutant", zh: "🏺 初级探险家" },
-        { minXp: 250,  en: "🧭 Archaeology Seeker", ar: "🧭 باحث الآثار", fr: "🧭 Chercheur d'Antiquités", zh: "🧭 文物寻宝者" },
-        { minXp: 600,  en: "📜 Egyptologist", ar: "📜 عالم المصريات", fr: "📜 Égyptologue", zh: "📜 埃及学家" },
-        { minXp: 1200, en: "👁️ Guardian of Secrets", ar: "👁️ حارس الأسرار", fr: "👁️ Gardien des Secrets", zh: "👁️ 秘密守护者" },
-        { minXp: 2000, en: "⚡ Royal Ascendant", ar: "⚡ الصاعد الملكي", fr: "⚡ Ascendant Royal", zh: "⚡ 王室升华者" },
-        { minXp: 3000, en: "👑 MEHA LEGEND", ar: "👑 أسطورة MEHA", fr: "👑 LÉGENDE MEHA", zh: "👑 MEHA 传奇" }
+        { minXp: 0,    en: "Novice Explorer", ar: "المستكشف المبتدئ", fr: "Explorateur Débutant", zh: "初级探险家" },
+        { minXp: 250,  en: "Archaeology Seeker", ar: "باحث الآثار", fr: "Chercheur d'Antiquités", zh: "文物寻宝者" },
+        { minXp: 600,  en: "Egyptologist", ar: "عالم المصريات", fr: "Égyptologue", zh: "埃及学家" },
+        { minXp: 1200, en: "Guardian of Secrets", ar: "حارس الأسرار", fr: "Gardien des Secrets", zh: "秘密守护者" },
+        { minXp: 2000, en: "Royal Ascendant", ar: "الصاعد الملكي", fr: "Ascendant Royal", zh: "王室升华者" },
+        { minXp: 3000, en: "MEHA LEGEND", ar: "أسطورة MEHA", fr: "LÉGENDE MEHA", zh: "MEHA 传奇" }
       ],
       ACHIEVEMENTS: [
         {
@@ -1096,7 +1179,7 @@
         { id: "title_explorer", label: { en: "Explorer", ar: "مستكشف", fr: "Explorateur", zh: "探险家" }, unlock: () => true },
         { id: "title_scribe", label: { en: "Temple Scribe", ar: "كاتب المعبد", fr: "Scribe du Temple", zh: "神庙文士" }, unlock: s => s.xp >= 250 },
         { id: "title_curator", label: { en: "Royal Curator", ar: "أمين المتحف الملكي", fr: "Conservateur Royal", zh: "王室馆长" }, unlock: s => s.unlockedArtifactIds.length >= 2 },
-        { id: "title_legend", label: { en: "👑 MEHA LEGEND", ar: "👑 أسطورة MEHA", fr: "👑 LÉGENDE MEHA", zh: "👑 MEHA 传奇" }, unlock: s => s.xp >= 3000 }
+        { id: "title_legend", label: { en: "MEHA LEGEND", ar: "أسطورة MEHA", fr: "LÉGENDE MEHA", zh: "MEHA 传奇" }, unlock: s => s.xp >= 3000 }
       ],
       LEVELS: [
         {
@@ -1208,40 +1291,45 @@
         en: {
           loading: "Opening the doors of the Pharaonic temple...",
           explorerDefault: "Explorer",
-          adminBtn: "🛡️ Admin",
-          settingsBtn: "⚙️ Settings",
-          profileTitle: "🏛️ Profile",
-          museumBtn: "🏺 Museum",
-          achievementsBtn: "🏅 Achievements",
+          adminBtn: "Admin",
+          settingsBtn: "Settings",
+          profileTitle: "Profile",
+          museumBtn: "Museum",
+          achievementsBtn: "Achievements",
           xpLabel: "Experience XP",
           homeTitle: "Temples, Pyramids & The Nile",
           homeSubtitle: "Difficulty and puzzle scenes are chosen randomly every round",
-          randomPlayBtn: "🎲 Play Random Stage (Auto Difficulty & New Scene)",
-          dailyBtn: "🗺️ Daily Puzzle: Lost Treasure (Once/Day)",
-          rewardsTitle: "🎡 Lucky Wheel & Store",
-          wheelBtn: "🎡 Lucky Wheel (Once/Day)",
-          storeBtn: "🛒 Store",
-          exitBtn: "🔙 Exit",
-          wheelModalTitle: "🎡 Pharaonic Lucky Wheel",
-          spinNowBtn: "🎡 Spin Now",
-          storeTitle: "🛒 MEHA Store",
-          dailyBoxTitle: "🎁 Pharaonic Treasure Box",
+          randomPlayBtn: "Play Random Stage (Auto Difficulty & New Scene)",
+          dailyBtn: "Daily Puzzle: Lost Treasure (Once/Day)",
+          rewardsTitle: "Lucky Wheel & Store",
+          wheelBtn: "Lucky Wheel (Once/Day)",
+          storeBtn: "Store",
+          exitBtn: "Exit",
+          hintBtnLabel: "Hint",
+          viewBtnLabel: "View 7s",
+          hintItemTitle: "Hint",
+          viewItemTitle: "View",
+          perDayLimit: "(3/day)",
+          wheelModalTitle: "Pharaonic Lucky Wheel",
+          spinNowBtn: "Spin Now",
+          storeTitle: "MEHA Store",
+          dailyBoxTitle: "Pharaonic Treasure Box",
           dailyBoxDesc: "Random coins (50 - 200) + Hint or View",
-          openBoxBtn: "🔓 Unlock Pharaonic Treasure",
+          openBoxBtn: "Unlock Pharaonic Treasure",
           buyBtn: "Buy",
-          museumTitle: "🏺 Personal Museum",
+          museumTitle: "Personal Museum",
           museumCollectedLabel: "Collected:",
           museumHint: "Tap any unlocked item to read its historical story.",
-          achievementsTitle: "🏅 Achievements & Titles",
-          titlesSectionTitle: "🏷️ Equip Title",
-          ranksLadderTitle: "👑 MEHA LEGEND Rank Progression",
-          adminTitle: "🛡️ Admin Dashboard",
-          settingsTitle: "⚙️ Settings",
-          volumeLabel: "🔊 Sound Effects Volume:",
-          langLabel: "🌐 Language:",
+          achievementsTitle: "Achievements & Titles",
+          titlesSectionTitle: "Equip Title",
+          ranksLadderTitle: "MEHA LEGEND Rank Progression",
+          adminTitle: "Admin Dashboard",
+          settingsTitle: "Settings",
+          volumeLabel: "Sound Effects Volume:",
+          langLabel: "Language:",
           saveCloseBtn: "Save & Close",
-          winTitle: "🎉 Great Job! Puzzle Completed",
-          factTitle: "📜 Fact Matching This Exact Image:",
+          winTitle: "Great Job! Puzzle Completed",
+          factTitle: "Fact Matching This Exact Image:",
           continueBtn: "Continue",
           closeBtn: "Close",
           lockedItem: "Locked Relic",
@@ -1250,40 +1338,45 @@
         ar: {
           loading: "جاري فتح أبواب المعبد الفرعوني...",
           explorerDefault: "مستكشف",
-          adminBtn: "🛡️ الإدارة",
-          settingsBtn: "⚙️ الإعدادات",
-          profileTitle: "🏛️ الملف الشخصي",
-          museumBtn: "🏺 المتحف الشخصي",
-          achievementsBtn: "🏅 الإنجازات والألقاب",
+          adminBtn: "الإدارة",
+          settingsBtn: "الإعدادات",
+          profileTitle: "الملف الشخصي",
+          museumBtn: "المتحف الشخصي",
+          achievementsBtn: "الإنجازات والألقاب",
           xpLabel: "نقاط الخبرة XP",
           homeTitle: "المعابد والأهرامات والنيل",
           homeSubtitle: "يتم اختيار الصعوبة ومشهد البازل عشوائياً في كل جولة",
-          randomPlayBtn: "🎲 لعب مرحلة عشوائية (صعوبة ومشهد جديد)",
-          dailyBtn: "🗺️ اللغز اليومي: الكنز المفقود (مرة/يوم)",
-          rewardsTitle: "🎡 عجلة الحظ والمتجر",
-          wheelBtn: "🎡 عجلة الحظ (مرة/يوم)",
-          storeBtn: "🛒 المتجر",
-          exitBtn: "🔙 خروج",
-          wheelModalTitle: "🎡 عجلة الحظ الفرعونية",
-          spinNowBtn: "🎡 أدر العجلة الآن",
-          storeTitle: "🛒 متجر MEHA",
-          dailyBoxTitle: "🎁 صندوق الكنز الفرعوني",
+          randomPlayBtn: "لعب مرحلة عشوائية (صعوبة ومشهد جديد)",
+          dailyBtn: "اللغز اليومي: الكنز المفقود (مرة/يوم)",
+          rewardsTitle: "عجلة الحظ والمتجر",
+          wheelBtn: "عجلة الحظ (مرة/يوم)",
+          storeBtn: "المتجر",
+          exitBtn: "خروج",
+          hintBtnLabel: "تلميح",
+          viewBtnLabel: "معاينة 7ث",
+          hintItemTitle: "تلميح",
+          viewItemTitle: "معاينة",
+          perDayLimit: "(3/يوم)",
+          wheelModalTitle: "عجلة الحظ الفرعونية",
+          spinNowBtn: "أدر العجلة الآن",
+          storeTitle: "متجر MEHA",
+          dailyBoxTitle: "صندوق الكنز الفرعوني",
           dailyBoxDesc: "عملات عشوائية (50 - 200) + تلميح أو معاينة",
-          openBoxBtn: "🔓 افتح صندوق الكنز الفرعوني",
+          openBoxBtn: "افتح صندوق الكنز الفرعوني",
           buyBtn: "شراء",
-          museumTitle: "🏺 المتحف الشخصي",
+          museumTitle: "المتحف الشخصي",
           museumCollectedLabel: "المقتنيات:",
           museumHint: "اضغط على أي قطعة مفتوحة لقراءة قصتها التاريخية.",
-          achievementsTitle: "🏅 الإنجازات والألقاب",
-          titlesSectionTitle: "🏷️ تفعيل لقب",
-          ranksLadderTitle: "👑 مسار رتبة أسطورة MEHA",
-          adminTitle: "🛡️ لوحة الإدارة",
-          settingsTitle: "⚙️ الإعدادات",
-          volumeLabel: "🔊 مستوى صوت المؤثرات:",
-          langLabel: "🌐 اللغة:",
+          achievementsTitle: "الإنجازات والألقاب",
+          titlesSectionTitle: "تفعيل لقب",
+          ranksLadderTitle: "مسار رتبة أسطورة MEHA",
+          adminTitle: "لوحة الإدارة",
+          settingsTitle: "الإعدادات",
+          volumeLabel: "مستوى صوت المؤثرات:",
+          langLabel: "اللغة:",
           saveCloseBtn: "حفظ وإغلاق",
-          winTitle: "🎉 أحسنت! تم إكمال اللغز",
-          factTitle: "📜 معلومة مطابقة لهذه الصورة تحديداً:",
+          winTitle: "أحسنت! تم إكمال اللغز",
+          factTitle: "معلومة مطابقة لهذه الصورة تحديداً:",
           continueBtn: "متابعة",
           closeBtn: "إغلاق",
           lockedItem: "أثر مغلق",
@@ -1292,40 +1385,45 @@
         fr: {
           loading: "Ouverture des portes du temple pharaonique...",
           explorerDefault: "Explorateur",
-          adminBtn: "🛡️ Admin",
-          settingsBtn: "⚙️ Paramètres",
-          profileTitle: "🏛️ Profil",
-          museumBtn: "🏺 Musée",
-          achievementsBtn: "🏅 Succès",
+          adminBtn: "Admin",
+          settingsBtn: "Paramètres",
+          profileTitle: "Profil",
+          museumBtn: "Musée",
+          achievementsBtn: "Succès",
           xpLabel: "Expérience XP",
           homeTitle: "Temples, Pyramides & Le Nil",
           homeSubtitle: "La difficulté et les scènes sont choisies aléatoirement",
-          randomPlayBtn: "🎲 Étape Aléatoire (Difficulté & Scène Auto)",
-          dailyBtn: "🗺️ Énigme Quotidienne : Trésor Perdu (1x/Jour)",
-          rewardsTitle: "🎡 Roue de la Chance & Boutique",
-          wheelBtn: "🎡 Roue de la Chance (1x/Jour)",
-          storeBtn: "🛒 Boutique",
-          exitBtn: "🔙 Quitter",
-          wheelModalTitle: "🎡 Roue Pharaonique",
-          spinNowBtn: "🎡 Tourner",
-          storeTitle: "🛒 Boutique MEHA",
-          dailyBoxTitle: "🎁 Coffre aux Trésors Pharaonique",
+          randomPlayBtn: "Étape Aléatoire (Difficulté & Scène Auto)",
+          dailyBtn: "Énigme Quotidienne : Trésor Perdu (1x/Jour)",
+          rewardsTitle: "Roue de la Chance & Boutique",
+          wheelBtn: "Roue de la Chance (1x/Jour)",
+          storeBtn: "Boutique",
+          exitBtn: "Quitter",
+          hintBtnLabel: "Indice",
+          viewBtnLabel: "Aperçu 7s",
+          hintItemTitle: "Indice",
+          viewItemTitle: "Aperçu",
+          perDayLimit: "(3/jour)",
+          wheelModalTitle: "Roue Pharaonique",
+          spinNowBtn: "Tourner",
+          storeTitle: "Boutique MEHA",
+          dailyBoxTitle: "Coffre aux Trésors Pharaonique",
           dailyBoxDesc: "Pièces aléatoires (50 - 200) + Indice ou Aperçu",
-          openBoxBtn: "🔓 Ouvrir le Coffre",
+          openBoxBtn: "Ouvrir le Coffre",
           buyBtn: "Acheter",
-          museumTitle: "🏺 Musée Personnel",
+          museumTitle: "Musée Personnel",
           museumCollectedLabel: "Collectés :",
           museumHint: "Touchez un objet débloqué pour lire son histoire.",
-          achievementsTitle: "🏅 Succès & Titres",
-          titlesSectionTitle: "🏷️ Équiper un Titre",
-          ranksLadderTitle: "👑 Progression vers LÉGENDE MEHA",
-          adminTitle: "🛡️ Tableau Admin",
-          settingsTitle: "⚙️ Paramètres",
-          volumeLabel: "🔊 Volume des Effets :",
-          langLabel: "🌐 Langue :",
+          achievementsTitle: "Succès & Titres",
+          titlesSectionTitle: "Équiper un Titre",
+          ranksLadderTitle: "Progression vers LÉGENDE MEHA",
+          adminTitle: "Tableau Admin",
+          settingsTitle: "Paramètres",
+          volumeLabel: "Volume des Effets :",
+          langLabel: "Langue :",
           saveCloseBtn: "Enregistrer et Fermer",
-          winTitle: "🎉 Bravo ! Puzzle Terminé",
-          factTitle: "📜 Fait correspondant à cette image :",
+          winTitle: "Bravo ! Puzzle Terminé",
+          factTitle: "Fait correspondant à cette image :",
           continueBtn: "Continuer",
           closeBtn: "Fermer",
           lockedItem: "Relique Verrouillée",
@@ -1334,40 +1432,45 @@
         zh: {
           loading: "正在开启法老神庙之门...",
           explorerDefault: "探险家",
-          adminBtn: "🛡️ 管理",
-          settingsBtn: "⚙️ 设置",
-          profileTitle: "🏛️ 个人档案",
-          museumBtn: "🏺 个人博物馆",
-          achievementsBtn: "🏅 成就与称号",
+          adminBtn: "管理",
+          settingsBtn: "设置",
+          profileTitle: "个人档案",
+          museumBtn: "个人博物馆",
+          achievementsBtn: "成就与称号",
           xpLabel: "经验值 XP",
           homeTitle: "神庙、金字塔与尼罗河",
           homeSubtitle: "每局随机抽取难度与拼图场景",
-          randomPlayBtn: "🎲 随机关卡（自动难度与新场景）",
-          dailyBtn: "🗺️ 每日谜题：失落宝藏（每日一次）",
-          rewardsTitle: "🎡 幸运轮盘与商店",
-          wheelBtn: "🎡 幸运轮盘（每日一次）",
-          storeBtn: "🛒 商店",
-          exitBtn: "🔙 退出",
-          wheelModalTitle: "🎡 法老幸运轮盘",
-          spinNowBtn: "🎡 立即转动",
-          storeTitle: "🛒 MEHA 商店",
-          dailyBoxTitle: "🎁 法老宝藏箱",
+          randomPlayBtn: "随机关卡（自动难度与新场景）",
+          dailyBtn: "每日谜题：失落宝藏（每日一次）",
+          rewardsTitle: "幸运轮盘与商店",
+          wheelBtn: "幸运轮盘（每日一次）",
+          storeBtn: "商店",
+          exitBtn: "退出",
+          hintBtnLabel: "提示",
+          viewBtnLabel: "预览 7秒",
+          hintItemTitle: "提示",
+          viewItemTitle: "预览",
+          perDayLimit: "(3/天)",
+          wheelModalTitle: "法老幸运轮盘",
+          spinNowBtn: "立即转动",
+          storeTitle: "MEHA 商店",
+          dailyBoxTitle: "法老宝藏箱",
           dailyBoxDesc: "随机金币（50 - 200）+ 提示或预览",
-          openBoxBtn: "🔓 开启法老宝藏箱",
+          openBoxBtn: "开启法老宝藏箱",
           buyBtn: "购买",
-          museumTitle: "🏺 个人博物馆",
+          museumTitle: "个人博物馆",
           museumCollectedLabel: "已收集：",
           museumHint: "点击已解锁藏品查看历史故事。",
-          achievementsTitle: "🏅 成就与称号",
-          titlesSectionTitle: "🏷️ 装备称号",
-          ranksLadderTitle: "👑 MEHA 传奇段位进阶",
-          adminTitle: "🛡️ 管理后台",
-          settingsTitle: "⚙️ 设置",
-          volumeLabel: "🔊 音效音量：",
-          langLabel: "🌐 语言：",
+          achievementsTitle: "成就与称号",
+          titlesSectionTitle: "装备称号",
+          ranksLadderTitle: "MEHA 传奇段位进阶",
+          adminTitle: "管理后台",
+          settingsTitle: "设置",
+          volumeLabel: "音效音量：",
+          langLabel: "语言：",
           saveCloseBtn: "保存并关闭",
-          winTitle: "🎉 太棒了！拼图完成",
-          factTitle: "📜 与此画面对应的历史知识：",
+          winTitle: "太棒了！拼图完成",
+          factTitle: "与此画面对应的历史知识：",
           continueBtn: "继续",
           closeBtn: "关闭",
           lockedItem: "未解锁文物",
@@ -1376,7 +1479,7 @@
       }
     };
 
-    const STORAGE_KEY = "meha_puzzle_save_v4";
+    const STORAGE_KEY = "meha_puzzle_save_v5";
     const todayKey = () => new Date().toISOString().slice(0, 10);
 
     function defaultState() {
@@ -1404,13 +1507,15 @@
     let state = loadState();
 
     function loadState() {
+      const base = defaultState();
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return defaultState();
+        if (!raw) return base;
         const parsed = JSON.parse(raw);
         return {
-          ...defaultState(),
+          ...base,
           ...parsed,
+          lang: parsed.lang || "en",
           dailyBought: {
             date: todayKey(),
             hint: 0,
@@ -1419,7 +1524,7 @@
           }
         };
       } catch (_) {
-        return defaultState();
+        return base;
       }
     }
 
@@ -1506,40 +1611,71 @@
       for (const r of CONFIG.RANKS) {
         if (xp < r.minXp) {
           const rem = r.minXp - xp;
-          return lang === "ar"
-            ? `${rem} XP للوصول إلى ${r.ar}`
-            : `${rem} XP to ${r.en}`;
+          const nextName = r[lang] || r.en;
+          if (lang === "ar") return `${rem} XP للوصول إلى ${nextName}`;
+          if (lang === "fr") return `${rem} XP vers ${nextName}`;
+          if (lang === "zh") return `距离 ${nextName} 还差 ${rem} XP`;
+          return `${rem} XP to ${nextName}`;
         }
       }
-      return lang === "ar" ? "أعلى رتبة ملكية مكتملة!" : "Highest Royal Rank Reached!";
+      if (lang === "ar") return "أعلى رتبة ملكية مكتملة!";
+      if (lang === "fr") return "Rang Royal Maximum Atteint !";
+      if (lang === "zh") return "已达到最高王室段位！";
+      return "Highest Royal Rank Reached!";
     }
 
     function getActiveTitleText() {
       const lang = state.lang || "en";
       const found = CONFIG.TITLES.find(t => t.id === state.activeTitleId) || CONFIG.TITLES[0];
-      return `🏷️ ${found.label[lang] || found.label.en}`;
+      return found.label[lang] || found.label.en;
     }
 
-    function regenLives() {
+    function updateLivesAndCountdown() {
+      let changed = false;
       if (state.lives >= CONFIG.MAX_LIVES) {
+        state.lives = CONFIG.MAX_LIVES;
         state.lastLifeTs = Date.now();
-        return;
+      } else {
+        const now = Date.now();
+        if (!state.lastLifeTs || typeof state.lastLifeTs !== "number") {
+          state.lastLifeTs = now;
+          changed = true;
+        }
+        const elapsedSec = Math.floor((now - state.lastLifeTs) / 1000);
+        if (elapsedSec >= CONFIG.LIFE_REGEN_SEC) {
+          const gained = Math.floor(elapsedSec / CONFIG.LIFE_REGEN_SEC);
+          state.lives = Math.min(CONFIG.MAX_LIVES, state.lives + gained);
+          if (state.lives >= CONFIG.MAX_LIVES) {
+            state.lastLifeTs = now;
+          } else {
+            state.lastLifeTs = state.lastLifeTs + gained * CONFIG.LIFE_REGEN_SEC * 1000;
+          }
+          changed = true;
+        }
       }
-      const now = Date.now();
-      const elapsedSec = Math.floor((now - state.lastLifeTs) / 1000);
-      if (elapsedSec >= CONFIG.LIFE_REGEN_SEC) {
-        const gained = Math.floor(elapsedSec / CONFIG.LIFE_REGEN_SEC);
-        state.lives = Math.min(CONFIG.MAX_LIVES, state.lives + gained);
-        state.lastLifeTs = now - ((elapsedSec % CONFIG.LIFE_REGEN_SEC) * 1000);
-        saveState();
+      if (changed) saveState();
+
+      const countdownEl = document.getElementById("ui-life-countdown");
+      if (!countdownEl) return;
+
+      if (state.lives < CONFIG.MAX_LIVES) {
+        const elapsedSec = Math.max(0, Math.floor((Date.now() - state.lastLifeTs) / 1000));
+        const remSec = Math.max(0, CONFIG.LIFE_REGEN_SEC - (elapsedSec % CONFIG.LIFE_REGEN_SEC));
+        const mm = String(Math.floor(remSec / 60)).padStart(2, "0");
+        const ss = String(remSec % 60).padStart(2, "0");
+        countdownEl.style.display = "inline-block";
+        countdownEl.textContent = `❤️ +1 ${mm}:${ss}`;
+      } else {
+        countdownEl.style.display = "none";
       }
     }
 
     function applyTranslations() {
-      const lang = state.lang || "en";
+      const lang = CONFIG.I18N[state.lang] ? state.lang : "en";
+      state.lang = lang;
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-      const dict = CONFIG.I18N[lang] || CONFIG.I18N.en;
+      const dict = CONFIG.I18N[lang];
       document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.getAttribute("data-i18n");
         if (dict[key]) el.textContent = dict[key];
@@ -1549,18 +1685,26 @@
     }
 
     function changeLang(newLang) {
-      state.lang = newLang;
+      state.lang = CONFIG.I18N[newLang] ? newLang : "en";
       saveState();
       applyTranslations();
       updateTopUI();
+      if (game.active && game.level) {
+        const diff = CONFIG.DIFFS[game.diffKey];
+        const lang = state.lang;
+        document.getElementById("game-level-title").textContent = game.level.title[lang] || game.level.title.en;
+        document.getElementById("game-diff-badge").textContent = `${diff.label[lang] || diff.label.en} • ${diff.rows}×${diff.cols}`;
+      }
       SoundEngine.playClick();
     }
 
     function updateTopUI() {
-      regenLives();
+      updateLivesAndCountdown();
       const lang = state.lang || "en";
+      const dict = CONFIG.I18N[lang] || CONFIG.I18N.en;
       const rank = getRankObj();
-      document.getElementById("ui-username").textContent = state.username;
+      const usernameEl = document.getElementById("ui-username");
+      usernameEl.textContent = state.username === "Explorer" ? dict.explorerDefault : state.username;
       document.getElementById("ui-rank").textContent = rank[lang] || rank.en;
       document.getElementById("ui-active-title").textContent = getActiveTitleText();
       document.getElementById("ui-lives").textContent = state.lives;
@@ -1569,6 +1713,8 @@
       document.getElementById("ui-next-rank").textContent = getNextRankInfo();
       document.getElementById("ui-hints").textContent = state.hints;
       document.getElementById("ui-views").textContent = state.views;
+      const volSlider = document.getElementById("volume-slider");
+      if (volSlider) volSlider.value = String(state.sfxVolume ?? 0.8);
     }
 
     function openModal(id) { document.getElementById(id).classList.add("open"); }
@@ -1587,6 +1733,7 @@
       boardImg: null,
       pieces: [],
       selectedIdx: null,
+      hintedIdx: null,
       timeLeft: 120,
       timerId: null,
       zoom: 1,
@@ -1608,16 +1755,21 @@
     }
 
     function startRandomLevel() {
-      regenLives();
+      updateLivesAndCountdown();
       if (state.lives <= 0) {
         SoundEngine.playError();
-        alert(state.lang === "ar" ? "لا توجد محاولات متبقية حالياً! انتظر أو اشحن من المتجر/الإدارة." : "No lives left! Wait for regeneration or refill.");
+        const rem = Math.max(0, CONFIG.LIFE_REGEN_SEC - (Math.floor((Date.now() - state.lastLifeTs) / 1000) % CONFIG.LIFE_REGEN_SEC));
+        const mm = String(Math.floor(rem / 60)).padStart(2, "0");
+        const ss = String(rem % 60).padStart(2, "0");
+        alert(state.lang === "ar"
+          ? `لا توجد قلوب متبقية حالياً! القلب القادم خلال ${mm}:${ss}.`
+          : `No lives left! Next life in ${mm}:${ss}.`);
         return;
       }
-      state.lives -= 1;
-      if (state.lives === CONFIG.MAX_LIVES - 1) {
+      if (state.lives >= CONFIG.MAX_LIVES) {
         state.lastLifeTs = Date.now();
       }
+      state.lives -= 1;
       saveState();
       updateTopUI();
 
@@ -1648,6 +1800,8 @@
       game.zoom = 1;
       game.peekUntil = 0;
       game.selectedIdx = null;
+      game.hintedIdx = null;
+      document.getElementById("peek-countdown-badge").style.display = "none";
 
       const dataUrl = renderSceneToBoardCanvas(level.id);
       const img = new Image();
@@ -1689,9 +1843,18 @@
       updateTimerLabel();
       game.timerId = setInterval(() => {
         if (!game.active) return;
-        if (Date.now() < game.peekUntil) {
+
+        const peekBadge = document.getElementById("peek-countdown-badge");
+        const remPeekMs = game.peekUntil - Date.now();
+        if (remPeekMs > 0) {
+          peekBadge.style.display = "inline-block";
+          document.getElementById("peek-seconds-left").textContent = Math.max(1, Math.ceil(remPeekMs / 1000));
+          drawBoard();
+        } else if (peekBadge.style.display !== "none") {
+          peekBadge.style.display = "none";
           drawBoard();
         }
+
         game.timeLeft -= 1;
         updateTimerLabel();
         if (game.timeLeft <= 0) {
@@ -1701,12 +1864,12 @@
           alert(state.lang === "ar" ? "انتهى الوقت! جرّب مرحلة جديدة." : "Time's up! Try another stage.");
           exitToHome();
         }
-      }, 1000);
+      }, 250);
     }
 
     function updateTimerLabel() {
       const m = String(Math.floor(Math.max(0, game.timeLeft) / 60)).padStart(2, "0");
-      const s = String(Math.max(0, game.timeLeft) % 60).padStart(2, "0");
+      const s = String(Math.floor(Math.max(0, game.timeLeft)) % 60).padStart(2, "0");
       document.getElementById("game-timer").textContent = `${m}:${s}`;
     }
 
@@ -1717,6 +1880,7 @@
     }
 
     function drawBoard() {
+      if (!game.boardImg) return;
       const diff = CONFIG.DIFFS[game.diffKey];
       const { rows, cols } = diff;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1734,13 +1898,6 @@
       ctx.strokeStyle = "#ffd83d";
       ctx.lineWidth = 3;
       ctx.strokeRect(boardX - 6, boardY - 6, boardSize + 12, boardSize + 12);
-
-      if (Date.now() < game.peekUntil && game.boardImg) {
-        ctx.save();
-        ctx.globalAlpha = 0.88;
-        ctx.drawImage(game.boardImg, boardX, boardY, boardSize, boardSize);
-        ctx.restore();
-      }
 
       game.pieces.forEach((piece, slotIdx) => {
         const r = Math.floor(slotIdx / cols);
@@ -1769,16 +1926,33 @@
         ctx.lineWidth = isCorrect ? 2.5 : 1.2;
         ctx.strokeRect(dx, dy, cellW, cellH);
 
+        if (game.hintedIdx === slotIdx) {
+          ctx.strokeStyle = "#38efcf";
+          ctx.lineWidth = 4;
+          ctx.strokeRect(dx + 2, dy + 2, cellW - 4, cellH - 4);
+        }
+
         if (game.selectedIdx === slotIdx) {
           ctx.strokeStyle = "#ffd83d";
           ctx.lineWidth = 3.5;
           ctx.strokeRect(dx + 2, dy + 2, cellW - 4, cellH - 4);
         }
       });
+
+      if (Date.now() < game.peekUntil) {
+        ctx.save();
+        ctx.fillStyle = "rgba(7, 18, 43, 0.85)";
+        ctx.fillRect(boardX - 6, boardY - 6, boardSize + 12, boardSize + 12);
+        ctx.drawImage(game.boardImg, boardX, boardY, boardSize, boardSize);
+        ctx.strokeStyle = "#38efcf";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(boardX, boardY, boardSize, boardSize);
+        ctx.restore();
+      }
     }
 
     canvas.addEventListener("pointerdown", (e) => {
-      if (!game.active) return;
+      if (!game.active || !game.boardImg) return;
       const diff = CONFIG.DIFFS[game.diffKey];
       const { rows, cols } = diff;
       const rect = canvas.getBoundingClientRect();
@@ -1821,8 +1995,13 @@
     });
 
     function handleUseHint() {
-      if (!game.active || state.hints <= 0) {
+      if (!game.active) {
         SoundEngine.playError();
+        return;
+      }
+      if (state.hints <= 0) {
+        SoundEngine.playError();
+        alert(state.lang === "ar" ? "لا توجد تلميحات متبقية! يمكنك الشراء من المتجر." : "No hints left! Buy more in the Store.");
         return;
       }
       const wrongIdx = game.pieces.findIndex((p, i) => p.id !== i || p.rot !== 0);
@@ -1832,6 +2011,8 @@
       const currentPosOfTarget = game.pieces.indexOf(targetPiece);
       [game.pieces[wrongIdx], game.pieces[currentPosOfTarget]] = [game.pieces[currentPosOfTarget], game.pieces[wrongIdx]];
       game.pieces[wrongIdx].rot = 0;
+      game.hintedIdx = wrongIdx;
+      game.selectedIdx = null;
 
       state.hints -= 1;
       saveState();
@@ -1842,14 +2023,21 @@
     }
 
     function handleUseView() {
-      if (!game.active || state.views <= 0) {
+      if (!game.active) {
         SoundEngine.playError();
+        return;
+      }
+      if (state.views <= 0) {
+        SoundEngine.playError();
+        alert(state.lang === "ar" ? "لا توجد معاينات متبقية! يمكنك الشراء من المتجر." : "No views left! Buy more in the Store.");
         return;
       }
       state.views -= 1;
       game.peekUntil = Date.now() + 7000;
       saveState();
       updateTopUI();
+      document.getElementById("peek-countdown-badge").style.display = "inline-block";
+      document.getElementById("peek-seconds-left").textContent = "7";
       SoundEngine.playClick();
       drawBoard();
     }
@@ -1860,6 +2048,7 @@
 
       clearInterval(game.timerId);
       game.active = false;
+      document.getElementById("peek-countdown-badge").style.display = "none";
       SoundEngine.playWin();
 
       const diff = CONFIG.DIFFS[game.diffKey];
@@ -1894,8 +2083,8 @@
       document.getElementById("win-scene-img").src = imgUrl;
       document.getElementById("win-scene-title").textContent = game.level.title[lang] || game.level.title.en;
       document.getElementById("win-rewards").textContent =
-        `+${earnedCoins} 🪙 | +${earnedXp} XP` +
-        (unlockedIds.length ? ` | 🏺 ${unlockedIds.join(", ")}` : "");
+        `+${earnedCoins} Coins | +${earnedXp} XP` +
+        (unlockedIds.length ? ` | ${unlockedIds.join(", ")}` : "");
       document.getElementById("win-fact").textContent = game.level.fact[lang] || game.level.fact.en;
       openModal("modal-win");
     }
@@ -1908,6 +2097,7 @@
     function exitToHome() {
       clearInterval(game.timerId);
       game.active = false;
+      document.getElementById("peek-countdown-badge").style.display = "none";
       canvas.style.transform = "scale(1)";
       showScreen("home");
       updateTopUI();
@@ -1963,7 +2153,7 @@
         updateTopUI();
 
         const lang = state.lang || "en";
-        document.getElementById("wheel-result-text").textContent = `🎉 ${chosen.label[lang] || chosen.label.en}`;
+        document.getElementById("wheel-result-text").textContent = `${chosen.label[lang] || chosen.label.en}`;
         SoundEngine.playWin();
         wheelSpinning = false;
       }, 3250);
@@ -1988,7 +2178,7 @@
       }
 
       if (lang === "ar") {
-        chestBtn.textContent = claimedToday ? "✅ تم فتح الصندوق اليوم" : "🔓 افتح صندوق الكنز الفرعوني";
+        chestBtn.textContent = claimedToday ? "تم فتح الصندوق اليوم" : "افتح صندوق الكنز الفرعوني";
       }
       openModal("modal-store");
     }
@@ -2008,8 +2198,8 @@
       state.lastStoreBoxDate = todayKey();
 
       const rewardSummary = lang === "ar"
-        ? `✨ حصلت على +${bonusCoins} 🪙 و +1 ${giveHint ? "تلميح 💡" : "معاينة 👁️"}!`
-        : `✨ Received +${bonusCoins} 🪙 & +1 ${giveHint ? "Hint 💡" : "View 👁️"}!`;
+        ? `حصلت على +${bonusCoins} عملة و +1 ${giveHint ? "تلميح" : "معاينة"}!`
+        : `Received +${bonusCoins} Coins & +1 ${giveHint ? "Hint" : "View"}!`;
 
       state.lastChestRewardText = rewardSummary;
       saveState();
@@ -2024,7 +2214,7 @@
       popEl.style.display = "block";
       popEl.textContent = rewardSummary;
       chestBtn.disabled = true;
-      chestBtn.textContent = lang === "ar" ? "✅ تم فتح الصندوق اليوم" : "✅ Unlocked Today";
+      chestBtn.textContent = lang === "ar" ? "تم فتح الصندوق اليوم" : "Unlocked Today";
     }
 
     function buyStoreItem(type, cost) {
@@ -2096,7 +2286,7 @@
           <h4 style="color:#ffd83d; margin-top:4px; font-size:0.9rem;">${ach.title[lang] || ach.title.en}</h4>
           <p style="font-size:0.78rem; margin-top:4px;">${ach.desc[lang] || ach.desc.en}</p>
           <small style="display:block; margin-top:6px; color:${isUnlocked ? "#38efcf" : "#bbb"}; font-weight:bold;">
-            ${isUnlocked ? (lang === "ar" ? "✅ مكتمل" : "✅ Unlocked") : (lang === "ar" ? "🔒 مقفل" : "🔒 Locked")}
+            ${isUnlocked ? (lang === "ar" ? "مكتمل" : "Unlocked") : (lang === "ar" ? "مقفل" : "Locked")}
           </small>
         `;
         achGrid.appendChild(div);
@@ -2111,7 +2301,7 @@
         btn.type = "button";
         btn.className = `title-pill ${isSelected ? "active-title" : ""}`;
         btn.disabled = !canEquip;
-        btn.textContent = `${t.label[lang] || t.label.en}${canEquip ? "" : " 🔒"}`;
+        btn.textContent = `${t.label[lang] || t.label.en}${canEquip ? "" : " (Locked)"}`;
         btn.onclick = () => {
           if (!canEquip) return;
           state.activeTitleId = t.id;
@@ -2175,6 +2365,7 @@
 
     function adminRefillLivesAndTools() {
       state.lives = CONFIG.MAX_LIVES;
+      state.lastLifeTs = Date.now();
       state.hints = 5;
       state.views = 5;
       saveState();
@@ -2221,13 +2412,15 @@
 
     applyTranslations();
     updateTopUI();
+    setInterval(updateLivesAndCountdown, 1000);
+
     setTimeout(() => {
       const splash = document.getElementById("splash-screen");
       if (splash) {
         splash.style.opacity = "0";
         setTimeout(() => { splash.style.display = "none"; }, 600);
       }
-    }, 800);
+    }, 1000);
   </script>
 </body>
 </html>
